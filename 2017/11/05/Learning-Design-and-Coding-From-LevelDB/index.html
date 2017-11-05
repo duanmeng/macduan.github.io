@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|PT Monda:300,300italic,400,400italic,700,700italic|PT Monda:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|courier new:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/favicon-32x32?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="C++, leveldb," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="LevelDB is a fast key-value storage library written at Google by Jeff Dean that provides an ordered mapping from string keys to string values. We could learn design and coding from the source code. 概述">
+<meta name="keywords" content="C++, leveldb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Learning Design and Coding From LevelDB">
+<meta property="og:url" content="http://duanmeng.github.io/2017/11/05/Learning-Design-and-Coding-From-LevelDB/index.html">
+<meta property="og:site_name" content="Macduan&#39;s Notes">
+<meta property="og:description" content="LevelDB is a fast key-value storage library written at Google by Jeff Dean that provides an ordered mapping from string keys to string values. We could learn design and coding from the source code. 概述">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-05T06:49:50.684Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Learning Design and Coding From LevelDB">
+<meta name="twitter:description" content="LevelDB is a fast key-value storage library written at Google by Jeff Dean that provides an ordered mapping from string keys to string values. We could learn design and coding from the source code. 概述">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://duanmeng.github.io/2017/11/05/Learning-Design-and-Coding-From-LevelDB/"/>
+
+
+
+
+
+  <title>Learning Design and Coding From LevelDB | Macduan's Notes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Macduan's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://duanmeng.github.io/2017/11/05/Learning-Design-and-Coding-From-LevelDB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="duanmeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/butters.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Macduan's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Learning Design and Coding From LevelDB</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-05T14:44:36+08:00">
+                2017-11-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>LevelDB is a fast key-value storage library written at Google by Jeff Dean that provides an ordered mapping from string keys to string values. We could learn design and coding from the source code.</em></p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h1 id="include-leveldb-amp-util"><a href="#include-leveldb-amp-util" class="headerlink" title="include/leveldb &amp; util"></a>include/leveldb &amp; util</h1><h2 id="Status"><a href="#Status" class="headerlink" title="Status"></a>Status</h2><ul>
+<li>include/leveldb/status.h</li>
+<li>util/status.cc</li>
+</ul>
+<p>Status是对每次操作结果的封装, 它只有一个成员变量<strong>char* state_</strong>来表示状态信息，它包含<br>三个字段[length, code, message], length表示message的长度，code是返回码，message是状态信息：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// OK status has a NULL state_.  Otherwise, state_ is a new[] array</span></div><div class="line"><span class="comment">// of the following form:</span></div><div class="line"><span class="comment">//    state_[0..3] == length of message</span></div><div class="line"><span class="comment">//    state_[4]    == code</span></div><div class="line"><span class="comment">//    state_[5..]  == message</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span>* state_;</div><div class="line"></div><div class="line"><span class="keyword">enum</span> Code &#123;</div><div class="line">  kOk = <span class="number">0</span>,</div><div class="line">  kNotFound = <span class="number">1</span>,</div><div class="line">  kCorruption = <span class="number">2</span>,</div><div class="line">  kNotSupported = <span class="number">3</span>,</div><div class="line">  kInvalidArgument = <span class="number">4</span>,</div><div class="line">  kIOError = <span class="number">5</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function">Code <span class="title">code</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> (state_ == <span class="literal">NULL</span>) ? kOk : <span class="keyword">static_cast</span>&lt;Code&gt;(state_[<span class="number">4</span>]);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span>* Status::CopyState(<span class="keyword">const</span> <span class="keyword">char</span>* state) &#123;</div><div class="line">  <span class="keyword">uint32_t</span> size;</div><div class="line">  <span class="built_in">memcpy</span>(&amp;size, state, <span class="keyword">sizeof</span>(size));</div><div class="line">  <span class="keyword">char</span>* result = <span class="keyword">new</span> <span class="keyword">char</span>[size + <span class="number">5</span>];</div><div class="line">  <span class="built_in">memcpy</span>(result, state, size + <span class="number">5</span>);</div><div class="line">  <span class="keyword">return</span> result;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个类对字符串的操作非常精妙，比如上述代码通过memcpy获取message长度信息.</p>
+<h2 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h2><ul>
+<li>include/leveldb/slice.h</li>
+</ul>
+<p>封装数据和其长度，便于直接通过指针操作, 并提供向std::String的转换.<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Slice</span> &#123;</span></div><div class="line">...</div><div class="line"><span class="keyword">private</span>:</div><div class="line">  <span class="keyword">const</span> <span class="keyword">char</span>* data_;</div><div class="line">  <span class="keyword">size_t</span> size_;</div><div class="line"> ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h2><ul>
+<li>include/leveldb/cache.h</li>
+<li>utils/cache.cc</li>
+</ul>
+<h3 id="overview"><a href="#overview" class="headerlink" title="overview"></a>overview</h3><p>Cache一个接口类，提供了有淘汰机制KV的接口，客户代码可以自己定义具体的实现，也可以使用默认的LRUCache,<br>从下面代码中的注释中可以看出设计思路。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// A Cache is an interface that maps keys to values.  It has internal</span></div><div class="line"><span class="comment">// synchronization and may be safely accessed concurrently from</span></div><div class="line"><span class="comment">// multiple threads.  It may automatically evict entries to make room</span></div><div class="line"><span class="comment">// for new entries.  Values have a specified charge against the cache</span></div><div class="line"><span class="comment">// capacity.  For example, a cache where the values are variable</span></div><div class="line"><span class="comment">// length strings, may use the length of the string as the charge for</span></div><div class="line"><span class="comment">// the string.</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">// A builtin cache implementation with a least-recently-used eviction</span></div><div class="line"><span class="comment">// policy is provided.  Clients may use their own implementations if</span></div><div class="line"><span class="comment">// they want something more sophisticated (like scan-resistance, a</span></div><div class="line"><span class="comment">// custom eviction policy, variable cache sizing, etc.)</span></div><div class="line"></div><div class="line"><span class="comment">// Create a new cache with a fixed size capacity.  This implementation</span></div><div class="line"><span class="comment">// of Cache uses a least-recently-used eviction policy.</span></div><div class="line"><span class="function"><span class="keyword">extern</span> Cache* <span class="title">NewLRUCache</span><span class="params">(<span class="keyword">size_t</span> capacity)</span></span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cache</span> &#123;</span></div><div class="line"> <span class="keyword">public</span>:</div><div class="line">  <span class="comment">// Opaque handle to an entry stored in the cache.</span></div><div class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">Handle</span> &#123;</span> &#125;;</div><div class="line">  <span class="function"><span class="keyword">virtual</span> Handle* <span class="title">Insert</span><span class="params">(<span class="keyword">const</span> Slice&amp; key, <span class="keyword">void</span>* value, <span class="keyword">size_t</span> charge,</span></span></div><div class="line">                         void (*deleter)(const Slice&amp; key, void* value)) = 0;</div><div class="line">  <span class="function"><span class="keyword">virtual</span> Handle* <span class="title">Lookup</span><span class="params">(<span class="keyword">const</span> Slice&amp; key)</span> </span>= <span class="number">0</span>;</div><div class="line">                ... ...</div></pre></td></tr></table></figure></p>
+<p>虽然其接口参数有明确，但是数据类型并没有明确而是留给具体实现代码，所以返回类型是<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Handle*</div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Handle</span> &#123;</span>&#125;;</div></pre></td></tr></table></figure></p>
+<p>这就是一个典型的Opaque data type的应用，<a href="https://en.wikipedia.org/wiki/Opaque_pointer" target="_blank" rel="external"><strong>wikipedia: opaque pointer</strong></a>,  <a href="https://en.wikipedia.org/wiki/Opaque_data_type" target="_blank" rel="external"><strong>wikipedia: opaque data type</strong></a>,  <a href="http://stackoverflow.com/questions/3854113/what-is-an-opaque-value" target="_blank" rel="external"><strong>stackoverflow: What is an opaque value?</strong>
+</a></p>
+<p>你会发现在cache.h中有一段extern声明,<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">extern</span> Cache* <span class="title">NewLRUCache</span><span class="params">(<span class="keyword">size_t</span> capacity)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>在cache.cc中有它的一种实现,<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">Cache* <span class="title">NewLRUCache</span><span class="params">(<span class="keyword">size_t</span> capacity)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ShardedLRUCache(capacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过extern声明(#include “cache.h”), 在链接的时候(链接cache.o)既可以选择cache.cc的默认实现即<strong>ShardedLRUCache</strong>, 也可以链接自己的实现。</p>
+<h3 id="ShardedLRUCache"><a href="#ShardedLRUCache" class="headerlink" title="ShardedLRUCache"></a>ShardedLRUCache</h3><p>cache.cc中提供了一个默认的cache实现即ShardedLRUCache, 其组成是LRUCache并基于key进行shard.<br>LRUCache依赖cache.c中的opaque数据抽象的具体实现<strong>LRUHandle</strong>和自己实现的一个哈希表<strong>HashHandle</strong>.<br>总而言之ShardedLRUCache就是二级hashtable, 其节点就是多个LRUCache.</p>
+<p>ShardedLRUCache在bucket分配与key的shard时用一些非常有意思的位操作，代码如下<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> kNumShardBits = <span class="number">4</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> kNumShards = <span class="number">1</span> &lt;&lt; kNumShardBits;</div><div class="line"></div><div class="line">LRUCache shard_[kNumShards];</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> uint32_t <span class="title">Shard</span><span class="params">(<span class="keyword">uint32_t</span> hash)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> hash &gt;&gt; (<span class="number">32</span> - kNumShardBits);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>kNumShards = 2 ^ kNumShardBits 这个左移代替指数计算好理解，但是shard操作hash &gt;&gt; (32 - kNumShardBits)<br>这个值得思考，一般会直接余除，但是这样效果会一样吗或者说会均匀分布在kNumShards个bucket中吗？<br>假设我们考虑4个bit的uint4_t（虽然并没有这样的类型），当kNumShardBits = 1时，bucket数量也就是kNumShards为2,<br>那么 4 - kNumShardBits = 3，每次Shard的时候右移动3个bit，这时会发现只有bit 3的那个bit右移没有消失（在bit 0），也就是说bit 3的那个bit决定了Shard的value(0 / 1)，正好均匀分布在2个bucket上了.<br>同理对于32bit的uint32_t整型数，其bit分布如下</p>
+<blockquote>
+<p>31 … (32 - kNumShardBits), (32 - kNumShardBits - 1) … 0</p>
+</blockquote>
+<p>如果右移32 - kNumShardBits，只有第一部分kNumShardBits个高位的bit有效，那么正好有2 ^ kNumShardBits 种<br>可能的值，均匀分布在index为0 - (2 ^ kNumShardBits - 1)的bucket上.<br>一个简单的Shard对效率都这么苛刻(位操作避免除法)，由此可见作者对性能的要求.</p>
+<h3 id="LRUCache-amp-LRUHandle-amp-HandleTable"><a href="#LRUCache-amp-LRUHandle-amp-HandleTable" class="headerlink" title="LRUCache &amp; LRUHandle &amp; HandleTable"></a>LRUCache &amp; LRUHandle &amp; HandleTable</h3><p>LRUCache由两个循环链表和一个HashTable组成（List+Hash的经典实现），一个链表是连接正在被使用的Node，一个链表连接<br>不再被使用的Node，HashTable就是使用链表解决Hash碰撞，所以每个Node（即LURHandle包含三个pointer和一个ref），作者<br>使用了经典的链表操作dummy node和二级指针<a href="http://coolshell.cn/articles/8990.html" target="_blank" rel="external">Linus</a>。Hash值的生成实现请见<br>Hash &amp; Coding哪一章。</p>
+<h2 id="Hash-amp-Coding"><a href="#Hash-amp-Coding" class="headerlink" title="Hash &amp; Coding"></a>Hash &amp; Coding</h2><p>util/hash.cc util/hash.h<br>util/coding.cc util/coding.h<br>hash.cc提供了一个默认的类似murmurhash的hash值计算的实现，coding.cc中提供了32/64整型数和Slice/String的转换.</p>
+<h2 id="env-amp-env-posix"><a href="#env-amp-env-posix" class="headerlink" title="env &amp; env_posix"></a>env &amp; env_posix</h2><p>util/env.cc include/leveldb/env.h<br>util/env_posix.cc</p>
+<h3 id="env"><a href="#env" class="headerlink" title="env"></a>env</h3><p>env中的接口类Env（虚基类）提供了文件操作的抽象，比如目录操作，日志，文件顺序/随机读取，在Option中可以配置Env使用的实现, leveldb提供了默认的posix标准的实现（具体见下一节）.<br>SequentialFile/RandomAccessFile封装了文件顺序/随机Read和Skip，WritableFile封装了文件的Append/Close/Flush/Sync<br>操作，Loger则封装了类似变长参数的logv接口（类似vprintf）. </p>
+<h3 id="env-posix"><a href="#env-posix" class="headerlink" title="env_posix"></a>env_posix</h3><p>env_posix是leveldb对Env接口类提供的默认implementation.<br>Limiter类通过基于RAII的Scope互斥锁和原子操作提供线程安全的计数操作，避免资源过度消耗，比如fd, mmap file数量.<br>PosixSequentialFile是SequentialFile的子类实现了其Read和Seek接口, 本质就是对fread和seek的wrapper.<br>PosixRandomAccessFile是RandomAccessFile的子类, 实际是pread() based random-access, 同时包含了Limiter, 不知道为什么Random Accesss为什么需要Limiter.<br>PosixMmapReadableFile是MmapReadableFile的子类, 实际是mmap() based random-access.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C-leveldb/" rel="tag"># C++, leveldb</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/04/LeetCode with C++ and Java and little scala/" rel="next" title="LeetCode using C++ and Java (keep updating ...)">
+                <i class="fa fa-chevron-left"></i> LeetCode using C++ and Java (keep updating ...)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/butters.jpg"
+                alt="duanmeng" />
+            
+              <p class="site-author-name" itemprop="name">duanmeng</p>
+              <p class="site-description motion-element" itemprop="description">边学边写边记</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/duanmeng" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:duanmeng@outlook.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#include-leveldb-amp-util"><span class="nav-number">2.</span> <span class="nav-text">include/leveldb & util</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Status"><span class="nav-number">2.1.</span> <span class="nav-text">Status</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Slice"><span class="nav-number">2.2.</span> <span class="nav-text">Slice</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache"><span class="nav-number">2.3.</span> <span class="nav-text">Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">2.3.1.</span> <span class="nav-text">overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ShardedLRUCache"><span class="nav-number">2.3.2.</span> <span class="nav-text">ShardedLRUCache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LRUCache-amp-LRUHandle-amp-HandleTable"><span class="nav-number">2.3.3.</span> <span class="nav-text">LRUCache & LRUHandle & HandleTable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hash-amp-Coding"><span class="nav-number">2.4.</span> <span class="nav-text">Hash & Coding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#env-amp-env-posix"><span class="nav-number">2.5.</span> <span class="nav-text">env & env_posix</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#env"><span class="nav-number">2.5.1.</span> <span class="nav-text">env</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#env-posix"><span class="nav-number">2.5.2.</span> <span class="nav-text">env_posix</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">duanmeng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
