@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章，在其博客All Things Distributed上亦有发布。  大约一年前，我发表了关于一致性模型文章的第一个版本，但是我对它一直不是很满意，因为它写的很匆忙，而且这个太重要值得更充分的研究。 ACM Queue让我修订一下发表在他们的杂志上，我利用这个机会改进了这篇文章。这篇是那篇的修订版。 最终一致性 - 在">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-20T13:38:59.413Z">
+<meta property="og:updated_time" content="2017-11-21T13:55:38.599Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[译]最终一致性 - 修订版(Eventually Consistent - Revisited)">
 <meta name="twitter:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章，在其博客All Things Distributed上亦有发布。  大约一年前，我发表了关于一致性模型文章的第一个版本，但是我对它一直不是很满意，因为它写的很匆忙，而且这个太重要值得更充分的研究。 ACM Queue让我修订一下发表在他们的杂志上，我利用这个机会改进了这篇文章。这篇是那篇的修订版。 最终一致性 - 在">
@@ -76,7 +76,7 @@
 		<nav class="header-nav">
 			<div class="social">
 				
-					<a class="mail" target="_blank" href="/duanmeng@outlook.com" title="mail"><i class="icon-mail"></i></a>
+					<a class="mail" target="_blank" href="mailto:duanmeng@outlook.comm" title="mail"><i class="icon-mail"></i></a>
 		        
 					<a class="linkedin" target="_blank" href="https://www.linkedin.com/in/meng-duan-85368552/" title="linkedin"><i class="icon-linkedin"></i></a>
 		        
@@ -113,7 +113,7 @@
 			<nav class="header-nav">
 				<div class="social">
 					
-						<a class="mail" target="_blank" href="/duanmeng@outlook.com" title="mail"><i class="icon-mail"></i></a>
+						<a class="mail" target="_blank" href="mailto:duanmeng@outlook.comm" title="mail"><i class="icon-mail"></i></a>
 			        
 						<a class="linkedin" target="_blank" href="https://www.linkedin.com/in/meng-duan-85368552/" title="linkedin"><i class="icon-linkedin"></i></a>
 			        
@@ -170,7 +170,7 @@
 <p>这些服务底层是全球范围运行的大规模分布式系统。这样的规模带来了额外的挑战，因为当一个系统处理海量请求时，那些低概率事件就会变成必然事件，并且需要在系统设计和架构中预先列出。考虑到这些全球范围的系统，我们普遍使用复制(Replication)技术来保证一致性和高可用性。 虽然复制技术让我们更接近目标，但是它不能以完全透明的方式实现它们；在一些条件下，这些服务的用户将会面临使用复制技术带来的后果。</p>
 <p>这些方面的表现方式之一就是提供的数据一致性类型，特别当底层的分布式系统为数据复制提供一种最终一致性模型。当在Amazon设计这些大规模系统时，我们用一组与大规模数据复制(data replication)相关的指导原则和抽象，并集中在高可用性与数据一致性的权衡上。 这篇文章我介绍了一些相关背景展示了我们交付需要在全球范围运行的可靠的分布式系统的方法。这篇文章的<a href="http://www.allthingsdistributed.com/2007/12/eventually_consistent.html" target="_blank" rel="external">早期版</a>本于2017年12月发表在网络博客All Things Distributed，并且在读者的帮助下改进了很多。</p>
 <p><strong>历史观点</strong></p>
-<p>在理想世界中，只会有一种一致性模型：当更新完成，所有的观察者都会看到。 70年代末期，在数据系统中第一次发现这个模型难以实现。关于这个主题最好的历史文献是Bruce Lindsay等人的<em>分布式数据库注释 <sup>5</sup></em>。 它阐述了数据库复制的基本原则，并讨论了一些找实现一致性的技术。 这些技术中许多试图实现分布式透明，就是对用户来说它似乎只在使用一个系统而不是多个协作系统。在这段时间内，许多系统采用的方法让整个系统失效好于破坏透明性 <sup>2</sup>。</p>
+<p>在理想世界中，只会有一种一致性模型：当更新完成，所有的观察者都会看到。 70年代末期，在数据系统中第一次发现这个模型难以实现。关于这个主题最好的历史文献是Bruce Lindsay等人的<em>分布式数据库注释 <sup>5</sup></em>。 它阐述了数据库复制的基本原则，并讨论了一些找实现一致性的技术。 这些技术中许多试图实现分布式透明，就是对用户来说它似乎只在使用一个系统而不是多个协作系统。这段时期许多系统采用这种方法，即使让整个系统失效也不破坏透明性 <sup>2</sup>。</p>
 <center>未完待续……</center>
       
 
