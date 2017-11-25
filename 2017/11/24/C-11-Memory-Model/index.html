@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>Tag: distributed | Macduan&#39;s Notes</title>
+  <title>C++11 Memory Model | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="边学边写边记">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Macduan&#39;s Notes">
-<meta property="og:url" content="http://duanmeng.github.io/tags/distributed/index.html">
+  <meta name="description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
+<meta name="keywords" content="C++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++11 Memory Model">
+<meta property="og:url" content="http://duanmeng.github.io/2017/11/24/C-11-Memory-Model/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="边学边写边记">
+<meta property="og:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-11-25T01:34:20.381Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Macduan&#39;s Notes">
-<meta name="twitter:description" content="边学边写边记">
+<meta name="twitter:title" content="C++11 Memory Model">
+<meta name="twitter:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
   
   
     <link rel="icon" href="[object Object]">
@@ -139,64 +141,210 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-C-11-Memory-Model" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/11/19/Eventually-Consistent - Revisited/" class="archive-article-date">
-  	<time datetime="2017-11-19T11:08:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-19</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/19/Eventually-Consistent - Revisited/">[译]最终一致性 - 重审版(Eventually Consistent - Revisited)</a>
+    <h1 class="article-title" itemprop="name">
+      C++11 Memory Model
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/11/24/C-11-Memory-Model/" class="archive-article-date">
+  	<time datetime="2017-11-24T14:05:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-24</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>Herb Sutter在一次对C++11内存模型的<a href="https://herbsutter.com/2013/02/11/atomic-weapons-the-c-memory-model-and-modern-hardware/" target="_blank" rel="external">演讲</a>中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。</em></p>
+<a id="more"></a>
+<p>咋一看这个句话很奇怪，难道C++98/03及以前的内存模型不支持多线程吗， 用C++03的标准不照样写多线程程序。 其实我忽略了一个事实在B家同学们都是gcc &amp; linux，潜意识posix标准的pthread就是C++的线程库存，其实还有cl &amp; windows:)</p>
+<p>C++标准是基于一个抽象的机器制定的（大部分语言标准应该也是这样），它没有具体的CPU或编译器。 C++98/03标准没有对每次读写（loads and stores)以及执行顺序作出规定，所以无法写出完全可移植的多线程代码（能同时支持freebsd，linux和windows就很不错了）。C++11标准则在设计上引入了支持多线程的内存模型，它规定了在多线程环境中内存的读写的操作以及可能的执行顺序<sup>1</sup>。</p>
+<p>在cppreference.com上可以看到<a href="http://en.cppreference.com/w/cpp/atomic/atomic/load" target="_blank" rel="external">load</a>和<a href="http://en.cppreference.com/w/cpp/atomic/atomic/store" target="_blank" rel="external">store</a>的原型如下,</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function">T <span class="title">load</span><span class="params">( <span class="built_in">std</span>::memory_order order = <span class="built_in">std</span>::memory_order_seq_cst )</span> <span class="keyword">const</span> <span class="keyword">noexcept</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">store</span><span class="params">( T desired, <span class="built_in">std</span>::memory_order order = <span class="built_in">std</span>::memory_order_seq_cst )</span> <span class="keyword">noexcept</span></span>;</div></pre></td></tr></table></figure>
+<p>对于<a href="http://en.cppreference.com/w/cpp/atomic/memory_order" target="_blank" rel="external">memory order</a>多线程环境中（CPU也是乱序执行的）的几种规定如下下表，</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Value</th>
+<th style="text-align:left">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">memory_order_relaxed</td>
+<td style="text-align:left">对其它读写操作没有同步，只保证本操作是原子的</td>
+</tr>
+<tr>
+<td style="text-align:left">memory_order_consume</td>
+<td style="text-align:left">load操作，当前线程依赖该原子变量的访存操作不能reorder到该指令之前，对其他线程store操作(release)可见</td>
+</tr>
+<tr>
+<td style="text-align:left">memory_order_acquire</td>
+<td style="text-align:left">load操作，当前线程所有访存操作不能reorder到该指令之前，对其他线程store操作(release)可见</td>
+</tr>
+<tr>
+<td style="text-align:left">memory_order_release</td>
+<td style="text-align:left">store操作，当前线程所有访存操作不能reorder到该指令之后，对其他线程load操作(consume)可见</td>
+</tr>
+<tr>
+<td style="text-align:left">memory_order_acq_rel</td>
+<td style="text-align:left">load/store操作，memory_order_acquire + memory_order_release</td>
+</tr>
+<tr>
+<td style="text-align:left">memory_order_seq_cst</td>
+<td style="text-align:left">memory_order_acq_rel + 顺序一致性(sequential consisten)</td>
+</tr>
+</tbody>
+</table>
+<p>关于memory_order_seq_cst与memory_order_acq_rel，下面这段代码很直观的体现了，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;atomic&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></div><div class="line"> </div><div class="line"><span class="built_in">std</span>::atomic&lt;<span class="keyword">bool</span>&gt; x = &#123;<span class="literal">false</span>&#125;;</div><div class="line"><span class="built_in">std</span>::atomic&lt;<span class="keyword">bool</span>&gt; y = &#123;<span class="literal">false</span>&#125;;</div><div class="line"><span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; z = &#123;<span class="number">0</span>&#125;;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_x</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    x.store(<span class="literal">true</span>, <span class="built_in">std</span>::memory_order_seq_cst);</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">write_y</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    y.store(<span class="literal">true</span>, <span class="built_in">std</span>::memory_order_seq_cst);</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_x_then_y</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="keyword">while</span> (!x.load(<span class="built_in">std</span>::memory_order_seq_cst))</div><div class="line">        ;</div><div class="line">    <span class="keyword">if</span> (y.load(<span class="built_in">std</span>::memory_order_seq_cst)) &#123;</div><div class="line">        ++z;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">read_y_then_x</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="keyword">while</span> (!y.load(<span class="built_in">std</span>::memory_order_seq_cst))</div><div class="line">        ;</div><div class="line">    <span class="keyword">if</span> (x.load(<span class="built_in">std</span>::memory_order_seq_cst)) &#123;</div><div class="line">        ++z;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"> </div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line"><span class="function"></span>&#123;</div><div class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">a</span><span class="params">(write_x)</span></span>;</div><div class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">b</span><span class="params">(write_y)</span></span>;</div><div class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">c</span><span class="params">(read_x_then_y)</span></span>;</div><div class="line">    <span class="built_in">std</span>::<span class="function">thread <span class="title">d</span><span class="params">(read_y_then_x)</span></span>;</div><div class="line">    a.join(); b.join(); c.join(); d.join();</div><div class="line">    assert(z.load() != <span class="number">0</span>);  <span class="comment">// will never happen</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p></p><p><br>知乎上有个G家的stephen w很认真的翻阅了经典<em>计算机体系结构：量化研究方法</em>给了不错的总结<sup>2</sup>,</p>
+<blockquote>
+<p>“SC要求所有内存操作表现为(appear)逐个执行（任一次的执行结果都像是所有处理器的操作都以某种次序执行），每个处理器中的操作都以其程序指定的次序执行。SC有两点要求：在每个处理器内，维护每个处理器的程序次序；在所有处理器间，维护单一的表征所有操作的次序。对于写操作W1, W2, 不能出现从处理器 P1 看来，执行次序为 W1-&gt;W2; 从处理器 P2 看来，执行次序却为 W2-&gt;W1 这种情况。</p>
+</blockquote>
+<p></p><p><br>参考链接</p>
+<ol>
+<li><a href="https://stackoverflow.com/questions/6319146/c11-introduced-a-standardized-memory-model-what-does-it-mean-and-how-is-it-g" target="_blank" rel="external">https://stackoverflow.com/questions/6319146/c11-introduced-a-standardized-memory-model-what-does-it-mean-and-how-is-it-g</a></li>
+<li><a href="https://www.zhihu.com/question/24301047/answer/83422523" target="_blank" rel="external">https://www.zhihu.com/question/24301047/answer/83422523</a></li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">system design</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/2017/11/24/C-11-Memory-Model/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2017/11/19/Eventually-Consistent - Revisited/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[译]最终一致性 - 重审版(Eventually Consistent - Revisited)</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    目录，不存在的…
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -219,9 +367,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
