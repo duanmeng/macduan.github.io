@@ -6,19 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>[译]最终一致性 - 重审版(Eventually Consistent - Revisited) | Macduan&#39;s Notes</title>
+  <title>[译]最终一致性 - 修订版(Eventually Consistent - Revisited) | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
 <meta name="keywords" content="distributed,system design">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[译]最终一致性 - 重审版(Eventually Consistent - Revisited)">
+<meta property="og:title" content="[译]最终一致性 - 修订版(Eventually Consistent - Revisited)">
 <meta property="og:url" content="http://duanmeng.github.io/2017/11/19/Eventually-Consistent - Revisited/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-26T03:04:08.583Z">
+<meta property="og:updated_time" content="2017-12-03T12:52:05.142Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[译]最终一致性 - 重审版(Eventually Consistent - Revisited)">
+<meta name="twitter:title" content="[译]最终一致性 - 修订版(Eventually Consistent - Revisited)">
 <meta name="twitter:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
   
   
@@ -148,7 +148,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      [译]最终一致性 - 重审版(Eventually Consistent - Revisited)
+      [译]最终一致性 - 修订版(Eventually Consistent - Revisited)
     </h1>
   
 
@@ -165,7 +165,7 @@
 <a id="more"></a>
 <p><em>大约一年前，我发表了关于一致性模型文章的<a href="http://www.allthingsdistributed.com/2007/12/eventually_consistent.html" target="_blank" rel="external">第一个版本</a>，但是我对它一直不是很满意，因为它写的很匆忙，而且这个太重要值得更充分的研究。 <a href="http://queue.acm.org/issuedetail.cfm?issue=1466443" target="_blank" rel="external">ACM Queue</a>让我修订一下发表在他们的杂志上，我利用这个机会改进了这篇文章。这篇是那篇的修订版。</em></p>
 <h3 id="最终一致性-在全球范围构建可靠的分布式系统需要在一致性和"><a href="#最终一致性-在全球范围构建可靠的分布式系统需要在一致性和" class="headerlink" title="最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和"></a>最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和</h3><p>支撑Amazon云计算的基础服务，例如Amazon的S3(Simple Storage Service)，SimpleDB和EC2(Elastic Compute Cloud)提供构建互联网规模计算平台和各种应用所需的资源。放在这些基础服务的需求非常严格；它们需要在安全性、 可伸缩性、 可用性、 性能和成本效率方面都非常优秀，同时为全球数以百万计的客户持续提供服务。</p>
-<p>这些服务底层是全球范围运行的大规模分布式系统。这样的规模带来了额外的挑战，因为当一个系统处理海量请求时，那些低概率事件就会变成必然事件，并且需要在系统设计和架构中预先列出。考虑到这些全球范围的系统，我们普遍使用副本(Replication)技术来保证一致性和高可用性。 虽然副本技术让我们更接近目标，但是它不能以完全透明的方式实现它们；在一些条件下，这些服务的用户将会面临使用副本技术带来的后果。</p>
+<p>这些服务底层是全球范围运行的大规模分布式系统。这样的规模带来了额外的挑战，因为当一个系统处理海量请求时，那些低概率事件就会变成必然事件，并且需要在系统设计和架构中预先列出。考虑到这些全球范围的系统，我们普遍使用副本(Replication)技术来保证一致的性能和高可用性。 虽然副本技术让我们更接近目标，但是它不能以完全透明的方式实现它们；在一些条件下，这些服务的用户将会面临使用副本技术带来的后果。</p>
 <p>这些方面的表现方式之一就是提供的数据一致性类型，特别当底层的分布式系统为数据副本提供一种最终一致性模型。当在Amazon设计这些大规模系统时，我们用一组与大规模数据副本(data replication)相关的指导原则和抽象，并集中在高可用性与数据一致性的权衡上。 这篇文章我介绍了一些相关背景展示了我们交付需要在全球范围运行的可靠的分布式系统的方法。这篇文章的<a href="http://www.allthingsdistributed.com/2007/12/eventually_consistent.html" target="_blank" rel="external">早期版</a>本于2017年12月发表在网络博客All Things Distributed，并且在读者的帮助下改进了很多。</p>
 <h3 id="历史观点"><a href="#历史观点" class="headerlink" title="历史观点"></a>历史观点</h3><p>在理想世界中，只会有一种一致性模型：当更新完成，所有的观察者都会看到。 70年代末期，在数据系统中第一次发现这个模型难以实现。关于这个主题最好的历史文献是Bruce Lindsay等人的<em>分布式数据库注释 <sup>5</sup></em>。 它阐述了数据库副本的基本原则，并讨论了一些找实现一致性的技术。 这些技术中许多试图实现分布式透明，就是对用户来说它似乎只在使用一个系统而不是多个协作系统。这段时期许多系统采用这种方法，即使让整个系统失效也不破坏透明性 <sup>2</sup>。</p>
 <p>在90年代中期，随着大型互联网的兴起，这些方法被重新审视。 当时人们开始意识到对于这些系统而言可用性是最重要的属性，但是他们也在纠结牺牲什么来保证可用性。 Eric Brewer，加州伯克利的系统学教授，Inktomi的头，在2001年的PODC(Principles of Distributed Computing)会议的主题演讲上提出了一并提出了不同的取舍方案 <sup>1</sup>。 他演示CAP理论，指出共享数据系统的三大属性即数据一致性，系统可用性和网络分区容忍性，在任何时刻只能同时保证两个。 Seth Gilbert和Nancy Lynch在他们2002年的一篇论文 <sup>4</sup>中给出了正式确认。</p>
@@ -199,7 +199,26 @@
 <li><strong>单调读一致性</strong>。 如果一个进程读取到了一个对象的值，任何后续访问都不会得到之前的值。</li>
 <li><strong>单调写一致性</strong>。 在这种情况下，系统保证由相同的进程序列化写操作。系统不保证这样的一致性非常难以编程。</li>
 </ul>
-<p>这些特性中的一部分可以被组合。例如，单调读一致性可以和会话一致性组合。从实践角度来看，这两个特性（单调读和读你所写）是最终一致性系统中最需要的，但不是一直必须的。这两个特性让开发者更容易构建应用，同时允许存储系统放松一致性且提供高可用性。</p>
+<p>以上一致性特性中的一部分可以被组合。例如，单调读一致性可以和会话一致性组合。从实践角度来看，这两个特性（单调读和读你所写）是最终一致性系统中最需要的，但不是一直必须的。这两个特性让开发者更容易构建应用，同时允许存储系统放松一致性且提供高可用性。</p>
+<p>从这些变化中可以看出，很多场景是可能的。相应的后果能否被接受取决于特定的应用程序。</p>
+<p>最终一致性不是什么极限分布式系统的深奥特性。许多现代关系型数据库管理系统（RDBMSs），提供主备（primary-backup）可靠性，在同步和异步模式实现副本技术。在同步模式副本更新是事务的一部分。在异步模式会延迟到达副本，通常通过日志传输的方式。在异步模式如果主服务在log送达之前宕机，从切换的备份服务读取的将会是旧的，不一致的值。同时，为了支持更好大规模读性能，RDBMSs已经提供从备份服务读取的功能，这是一个经典的保证最终一致性的案例，其不一致性窗口取决于日志传送的周期。</p>
+<h4 id="服务端一致性"><a href="#服务端一致性" class="headerlink" title="服务端一致性"></a>服务端一致性</h4><p>在服务端我们需要更深入地理解更新在系统中执行的流程，从而理解是什么让开发者遇到不同模式。开始前，让我们先建立一些定义：</p>
+<blockquote>
+<p>N = 存储数据副本的节点的数量<br>W = 更新成功所需的副本更新成功的数量 （译者注：如果副本更新没有达到这个数量就是更新失败）<br>R = 一次数据对象读取要访问的副本的数量</p>
+</blockquote>
+<p>如果$W + R &gt; N$，那么写集和读集会一直重叠，这样可以保证强一致性。在使用同步副本的主备RDBMSs场景中，$N = 2, W = 2, R = 1$。客户端无论从哪个副本读都会得到一致的结果。在异步模式且可从备份读取的场景中，$N = 2, W = 1, R = 1$，一致性不能被保证。</p>
+<p>这些配置方案就是基本的仲裁协议（<a href="">quorum</a> protocols），当系统以为故障无法写入W个节点时，写操作失败，意味着系统的不可用。例如$N = 3, W = 3$且只有2个节点可用，系统的写操作失败。</p>
+<p>在需要提供高性能和高可用性的分布式存储系统中，副本数量基本上要大于2。只关注容错的系统通常用$N = 3$且$W =2, R = 2$的配置。需要提供非常高的读负载的系统通常会使用超过关注容错系统的副本数量；N可以是几十甚至几百，R配置成1，这样读一次副本就可以返回结果。关注一致性的系统通常为更新设置W = N，这样就降低了写成功的可能性。关注容错而不是一致性的系统通常配置是$W = 1$，获取最小更新持久性（译者注：这是什么鬼）并通过惰性（lazy/epidemic，译者注：跟GFS的primary-secondary更新很像）更新机制去更新其他副本。</p>
+<p>如何更新$N, W, R$，依赖于常见的操作是什么和哪个性能指标需要被优化。当$R = 1, N = W$时我们优化读操作，当$W = 1, R = N$我们优化快速写操作。当然对于后者持久性在发生异常时不被保证，如果$W &lt; (N + 1) / 2$，冲突写（译者注：比如，不同客户端发起的写操作）的集合可能不会重叠。</p>
+<p>弱或最终一致性产生于$W + R &lt;= N$，意味着存在读写集没有重叠的可能性。如果不是刻意的配置或者基于容错用例，几乎没有任何理由设置R为1而不是其它值。这发生在两种场景中：第一个为了前面提到的读操作扩展的大规模副本；第二个是数据获取更复杂。在简单键值模型非常容易通过版本对比来决定最新写入系统的值，但是在返回对象集的系统中非常难决定最新正确的集合应该是哪个。在大多数写集合小于副本集合的系统中，有一种机制就是，用惰性更新的方式更新副本中剩余未更新的节点。所有副本更新之前的时间段被称为前面提到的不一致性窗口。如果$W + R &lt;= N$，那么系统容易从尚未更新的节点读取数据。</p>
+<p>读你所写一致性，会话一致性和单调一致性能否实现，大体上依赖于客户端与对它们执行分布式协议服务端的“粘性”。如果每次都是相同的服务器，那么比较容易保证读你所写和单调一致性读。这样会让负载均衡和容错稍微难以管理，但是是一个简单解决方案。用粘性的会话，让这个显示和提供了一个客户端可以推断的暴露级别。（译者注：什么鬼）</p>
+<p>有时候在客户端实现了读你所写和单调读。通过为写添加版本，客户端丢弃读取的版本号比上次所见低的数据。</p>
+<p>当系统中一些节点与其它节点断开时分区发生了，但是这两批节点可以被一组客户端访问。如果使用经典的多数仲裁方法，那么当其它副本无法访问时，拥有W个节点的副本集依旧可以继续接受更新。读集合亦是如此。考虑到两个集合的重叠，根据定义，少数集合变得不可用。分区不会经常发生，但是他们的确发生在数据中心之间，以及数据中心内部。</p>
+<p>在一些应用中任何分区的不可达都是不可接受的，重要的是能够访问该分区的客户端可以取得进展。在这种场景下两个分区都分配一组新的存储节点接收数据，并且在分区恢复后执行合并操作。例如，在亚马逊购物车就是使用这样的永远可写系统；这样即使发生分区，客户可以继续添加商品到购物车，即使原来的购物车位于其它分区。一旦分区恢复购物车应用（译者注：客户端？）会帮助购物车数据合并。</p>
+<h3 id="亚马逊的Dynamo"><a href="#亚马逊的Dynamo" class="headerlink" title="亚马逊的Dynamo"></a>亚马逊的Dynamo</h3><p>亚马逊的Dynamo就是这样一个把所有这些特性显示控制的应用架构的系统，它是一个键值存储系统，跟AWS（Amazon’s Web Service）一样，它在内部被广泛用于构建亚马逊电子商务平台的服务。一个重要的设计目标就是让创建Dynamo存储系统（它通常分布在多个数据中心）实例的应用服务的拥有者能在一致性，持久性，可用性和性能之间在一定代价上作出权衡。<sup>3</sup></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>在大规模可靠的分布式系统中，必须容忍数据不一致的原因有两个：在高并发条件下改善读写性能；处理分区场景中大部分模型让系统不可用，即使节点都在运行。</p>
+<p>能否接受非一致性取决于客户端应用。在所有场景中，开发者需要意识到一致性保证由存储系统提供，需要在开发应用时考虑到。有许多对最终一致性模型实际的改进，比如会话一致性和单调读，它们提供了更好的工具给开发者。很多时候应用可以很好的处理存储系统的最终一致性。一个流行的用例就是网站，我们可以有用户感知一致性的概念。在这个场景下，不一致性窗口需要小于返回客户加载的下一页所需的时间。这个允许在下次读之前更新可以传播到整个系统。</p>
+<p>这篇文章的目的就是引起运行在全球范围的工程系统复杂性的认识，这个系统需要仔细调优来保证它们可以交付应用所需要的持久性，可用性和性能。系统设计者拥有的一个工具之一就是一致性窗口的长度，在这个时间段内系统的客户端可能暴露在大规模工程系统的现实中。</p>
 <h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
 <li>Brewer, E. A. 2000. Towards robust distributed systems (abstract). In Proceedings of the 19th Annual ACM Symposium on Principles of Distributed Computing (July 16-19, Portland, Oregon): 7</li>
 <li>A Conversation with Bruce Lindsay. 2004. ACM Queue 2(8): 22-33.</li>
@@ -207,7 +226,7 @@
 <li>Gilbert , S., Lynch, N. 2002. Brewer’s conjecture and the feasibility of consistent, available, partition-tolerant Web services. ACM SIGACT News 33(2).</li>
 <li>Lindsay, B. G., Selinger, P. G., et al. 1980. Notes on distributed databases. In Distributed Data Bases, ed. I. W. Draffan and F. Poole, 247-284. Cambridge: Cambridge University Press. Also available as IBM Research Report RJ2517, San Jose, California (July 1979).</li>
 </ol>
-<center>未完待续……</center>
+
       
 
       
@@ -332,7 +351,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#最终一致性-在全球范围构建可靠的分布式系统需要在一致性和"><span class="toc-number">1.</span> <span class="toc-text">最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#历史观点"><span class="toc-number">2.</span> <span class="toc-text">历史观点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一致性-——-客户端与服务端"><span class="toc-number">3.</span> <span class="toc-text">一致性 —— 客户端与服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端一致性"><span class="toc-number">3.1.</span> <span class="toc-text">客户端一致性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文献"><span class="toc-number">4.</span> <span class="toc-text">参考文献</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#最终一致性-在全球范围构建可靠的分布式系统需要在一致性和"><span class="toc-number">1.</span> <span class="toc-text">最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#历史观点"><span class="toc-number">2.</span> <span class="toc-text">历史观点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一致性-——-客户端与服务端"><span class="toc-number">3.</span> <span class="toc-text">一致性 —— 客户端与服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端一致性"><span class="toc-number">3.1.</span> <span class="toc-text">客户端一致性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#服务端一致性"><span class="toc-number">3.2.</span> <span class="toc-text">服务端一致性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#亚马逊的Dynamo"><span class="toc-number">4.</span> <span class="toc-text">亚马逊的Dynamo</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文献"><span class="toc-number">6.</span> <span class="toc-text">参考文献</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -457,10 +476,6 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">distributed</a>
               </li>
              
@@ -469,7 +484,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -482,10 +505,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
