@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>分布式原理与工程 —— Quorum机制 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，其主要数学思想来源于鸽巢原理1。">
+  <meta name="description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
 <meta name="keywords" content="distributed,system design">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式原理与工程 —— Quorum机制">
 <meta property="og:url" content="http://duanmeng.github.io/2017/12/03/Quorum/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，其主要数学思想来源于鸽巢原理1。">
+<meta property="og:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-03T13:15:31.195Z">
+<meta property="og:updated_time" content="2017-12-13T15:40:27.644Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式原理与工程 —— Quorum机制">
-<meta name="twitter:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，其主要数学思想来源于鸽巢原理1。">
+<meta name="twitter:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
   
   
     <link rel="icon" href="[object Object]">
@@ -161,8 +161,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，其主要数学思想来源于<a href="https://zh.wikipedia.org/wiki/%E9%B8%BD%E5%B7%A2%E5%8E%9F%E7%90%86" target="_blank" rel="external">鸽巢原理</a><sup>1</sup>。</p>
-<a id="more"></a>
+        <p>Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，<a id="more"></a> 其主要数学思想来源于<a href="https://zh.wikipedia.org/wiki/%E9%B8%BD%E5%B7%A2%E5%8E%9F%E7%90%86" target="_blank" rel="external">鸽巢原理</a><sup>1</sup>。</p>
 <h3 id="Quorum机制定义"><a href="#Quorum机制定义" class="headerlink" title="Quorum机制定义"></a>Quorum机制定义</h3><p>我们普遍使用副本(Replication)技术来保证一致的性能和高可用性<sup>2</sup>，Quorum是一种简单有效的管理副本的机制，我们先建立如下定以（[2]中也有描述）：</p>
 <blockquote>
 <p>N = 存储数据副本的节点的数量<br>W = 更新成功所需的副本更新成功的数量<br>R = 一次数据对象读取要访问的副本的数量</p>
@@ -259,6 +258,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2017/12/07/gfs-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          GFS总结
+        
+      </div>
+    </a>
   
   
     <a href="/2017/11/26/coursera-ng-deeplearning-notes/" id="article-nav-older" class="article-nav-link-wrap">
@@ -414,6 +422,10 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">distributed</a>
               </li>
              
@@ -422,15 +434,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -443,6 +451,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">

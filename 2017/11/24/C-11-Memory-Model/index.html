@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>C++11 Memory Model | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
+  <meta name="description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型">
 <meta name="keywords" content="C++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++11 Memory Model">
 <meta property="og:url" content="http://duanmeng.github.io/2017/11/24/C-11-Memory-Model/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
+<meta property="og:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-25T01:34:20.381Z">
+<meta property="og:updated_time" content="2017-12-13T15:41:28.320Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++11 Memory Model">
-<meta name="twitter:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。">
+<meta name="twitter:description" content="Herb Sutter在一次对C++11内存模型的演讲中提到C++11的内存模型">
   
   
     <link rel="icon" href="[object Object]">
@@ -161,8 +161,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>Herb Sutter在一次对C++11内存模型的<a href="https://herbsutter.com/2013/02/11/atomic-weapons-the-c-memory-model-and-modern-hardware/" target="_blank" rel="external">演讲</a>中提到C++11的内存模型让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。</em></p>
-<a id="more"></a>
+        <p><em>Herb Sutter在一次对C++11内存模型的<a href="https://herbsutter.com/2013/02/11/atomic-weapons-the-c-memory-model-and-modern-hardware/" target="_blank" rel="external">演讲</a>中提到C++11的内存模型<a id="more"></a>让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。</em></p>
 <p>咋一看这个句话很奇怪，难道C++98/03及以前的内存模型不支持多线程吗， 用C++03的标准不照样写多线程程序。 其实我忽略了一个事实在B家同学们都是gcc &amp; linux，潜意识posix标准的pthread就是C++的线程库存，其实还有cl &amp; windows:)</p>
 <p>C++标准是基于一个抽象的机器制定的（大部分语言标准应该也是这样），它没有具体的CPU或编译器。 C++98/03标准没有对每次读写（loads and stores)以及执行顺序作出规定，所以无法写出完全可移植的多线程代码（能同时支持freebsd，linux和windows就很不错了）。C++11标准则在设计上引入了支持多线程的内存模型，它规定了在多线程环境中内存的读写的操作以及可能的执行顺序<sup>1</sup>。</p>
 <p>在cppreference.com上可以看到<a href="http://en.cppreference.com/w/cpp/atomic/atomic/load" target="_blank" rel="external">load</a>和<a href="http://en.cppreference.com/w/cpp/atomic/atomic/store" target="_blank" rel="external">store</a>的原型如下,</p>
@@ -459,6 +458,10 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">distributed</a>
               </li>
              
@@ -467,15 +470,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -488,6 +487,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">

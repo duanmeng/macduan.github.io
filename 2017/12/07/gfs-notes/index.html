@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>tags | Macduan&#39;s Notes</title>
+  <title>GFS总结 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="边学边写边记">
-<meta property="og:type" content="website">
-<meta property="og:title" content="tags">
-<meta property="og:url" content="http://duanmeng.github.io/tags/index.html">
+  <meta name="description" content="本文是阅读完google经典的论文The Google File System后的总结。">
+<meta name="keywords" content="distributed,google">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GFS总结">
+<meta property="og:url" content="http://duanmeng.github.io/2017/12/07/gfs-notes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="边学边写边记">
+<meta property="og:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-11-04T11:24:44.014Z">
+<meta property="og:updated_time" content="2017-12-13T15:39:07.450Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="tags">
-<meta name="twitter:description" content="边学边写边记">
+<meta name="twitter:title" content="GFS总结">
+<meta name="twitter:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
   
   
     <link rel="icon" href="[object Object]">
@@ -140,27 +141,28 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="page-" class="article article-type-page " itemscope itemprop="blogPost">
+            <article id="post-gfs-notes" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      tags
+      GFS总结
     </h1>
   
 
         
-        <a href="/tags/index.html" class="archive-article-date">
-  	<time datetime="2017-11-04T11:24:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-04</time>
+        <a href="/2017/12/07/gfs-notes/" class="archive-article-date">
+  	<time datetime="2017-12-07T14:19:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-07</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>本文是阅读完google经典的论文<a href="https://research.google.com/archive/gfs.html" target="_blank" rel="external"><em>The Google File System</em></a>后的总结。 <a id="more"></a></p>
+<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3>
       
 
       
@@ -168,6 +170,21 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">google</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -218,7 +235,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/tags/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/2017/12/07/gfs-notes/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -230,6 +247,16 @@
 </article>
 
   
+<nav id="article-nav">
+  
+  
+    <a href="/2017/12/03/Quorum/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">分布式原理与工程 —— Quorum机制</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -251,7 +278,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    目录，不存在的…
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">1.</span> <span class="toc-text">场景</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -293,7 +320,7 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,

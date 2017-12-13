@@ -8,22 +8,22 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>deeplearning.ai系列学习笔记 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，我学习了前两门（完成了作业和实验拿到了证书，算是上班远坐地铁时间长的福利吧），">
+  <meta name="description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，">
 <meta name="keywords" content="coursera,deep learning,AI">
 <meta property="og:type" content="article">
 <meta property="og:title" content="deeplearning.ai系列学习笔记">
 <meta property="og:url" content="http://duanmeng.github.io/2017/11/26/coursera-ng-deeplearning-notes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，我学习了前两门（完成了作业和实验拿到了证书，算是上班远坐地铁时间长的福利吧），">
+<meta property="og:description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://duanmeng.github.io/images/housing_price_prediction_neural_network.png">
 <meta property="og:image" content="http://duanmeng.github.io/images/scale_drivers_deep_learning_progress.png">
 <meta property="og:image" content="http://duanmeng.github.io/images/notations1.png">
 <meta property="og:image" content="http://duanmeng.github.io/images/notations2.png">
-<meta property="og:updated_time" content="2017-11-27T16:51:07.857Z">
+<meta property="og:updated_time" content="2017-12-13T15:41:12.980Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="deeplearning.ai系列学习笔记">
-<meta name="twitter:description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，我学习了前两门（完成了作业和实验拿到了证书，算是上班远坐地铁时间长的福利吧），">
+<meta name="twitter:description" content="吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，">
 <meta name="twitter:image" content="http://duanmeng.github.io/images/housing_price_prediction_neural_network.png">
   
   
@@ -166,7 +166,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，我学习了前两门（完成了作业和实验拿到了证书，算是上班远坐地铁时间长的福利吧），<a id="more"></a>难能可贵的是Ng考虑到国内的情况在网易云课堂上免费提供了该系列课程的学习视频和资料，所以我可以在笔记中引用课程资料，但是<strong>不会上传作业答案与实验代码</strong>。</p>
+        <p>吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，<a id="more"></a>我学习了前两门（完成了作业和实验拿到了证书，算是上班远坐地铁时间长的福利吧），难能可贵的是Ng考虑到国内的情况在网易云课堂上免费提供了该系列课程的学习视频和资料，所以我可以在笔记中引用课程资料，但是<strong>不会上传作业答案与实验代码</strong>。</p>
 <h2 id="1-Neural-Networks-and-Deep-Learning"><a href="#1-Neural-Networks-and-Deep-Learning" class="headerlink" title="1. Neural Networks and Deep Learning"></a>1. Neural Networks and Deep Learning</h2><h3 id="1-1-week01"><a href="#1-1-week01" class="headerlink" title="1.1 week01"></a>1.1 week01</h3><h4 id="什么是神经网络"><a href="#什么是神经网络" class="headerlink" title="什么是神经网络"></a>什么是神经网络</h4><p>以房价预测为例（Ng很喜欢这个例子）给出了一个非常简单的Neural Network，如下图所示，有输入层，隐藏层和输出层（输入层不算做NN的层数之中），输入层是简单的特征，隐藏层则是输入层简单特征组合成的更复杂的特征，那些圆圈是“激励”（activator）一般是ReLU）和Sigmoid这一类函数。<br><img src="/images/housing_price_prediction_neural_network.png" alt=""></p>
 <h4 id="深度学习为什么兴起"><a href="#深度学习为什么兴起" class="headerlink" title="深度学习为什么兴起"></a>深度学习为什么兴起</h4><p>大数据驱动了深度学习的兴起（当然少不了Hinton大神的卓越贡献)，如下图可以看到随着数据量的增大，深度学习/神经网络与传统机器学习的效果差距越来越大。之前团队培训时一个策略高工说过业务 &gt; 数据 &gt; 模型，离开具体业务场景和数据支撑空谈模型是没有意义的。<br><img src="/images/scale_drivers_deep_learning_progress.png" alt=""></p>
 <h4 id="该课程的术语与表示"><a href="#该课程的术语与表示" class="headerlink" title="该课程的术语与表示"></a>该课程的术语与表示</h4><p>因为本系列课程都是用Python，为了优化会矩阵化，矩阵形状对比是一个很实用且重要的调试手段之一，比如输入X的形状是(n<sub>x</sub>, m)，m是训练用例的数量，n<sub>x</sub>则是输入特征的数量。<br><img src="/images/notations1.png" alt=""><br><img src="/images/notations2.png" alt=""></p>
@@ -449,6 +449,10 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">distributed</a>
               </li>
              
@@ -457,15 +461,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">C++</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -478,6 +478,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
