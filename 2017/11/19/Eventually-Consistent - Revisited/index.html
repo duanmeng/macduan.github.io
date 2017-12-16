@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>[译]最终一致性 - 修订版(Eventually Consistent - Revisited) | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章">
+  <meta name="description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
 <meta name="keywords" content="distributed,system design">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[译]最终一致性 - 修订版(Eventually Consistent - Revisited)">
 <meta property="og:url" content="http://duanmeng.github.io/2017/11/19/Eventually-Consistent - Revisited/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章">
+<meta property="og:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-13T15:47:47.510Z">
+<meta property="og:updated_time" content="2017-12-13T15:52:54.570Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[译]最终一致性 - 修订版(Eventually Consistent - Revisited)">
-<meta name="twitter:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章">
+<meta name="twitter:description" content="译者注：这是AWS CTO Werner Vogels写的一致性模型的经典文章在其博客All Things Distributed上亦有发布。">
   
   
     <link rel="icon" href="[object Object]">
@@ -161,7 +161,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>译者注：这是AWS CTO Werner Vogels写的<a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html" target="_blank" rel="external">一致性模型的经典文章</a> <a id="more"></a> 在其博客<a href="http://www.allthingsdistributed.com/" target="_blank" rel="external">All Things Distributed</a>上亦有发布。</em></p>
+        <p><em>译者注：这是AWS CTO Werner Vogels写的<a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html" target="_blank" rel="external">一致性模型的经典文章</a>在其博客<a href="http://www.allthingsdistributed.com/" target="_blank" rel="external">All Things Distributed</a>上亦有发布。</em>       </p>
+<a id="more"></a> 
 <p><em>大约一年前，我发表了关于一致性模型文章的<a href="http://www.allthingsdistributed.com/2007/12/eventually_consistent.html" target="_blank" rel="external">第一个版本</a>，但是我对它一直不是很满意，因为它写的很匆忙，而且这个太重要值得更充分的研究。 <a href="http://queue.acm.org/issuedetail.cfm?issue=1466443" target="_blank" rel="external">ACM Queue</a>让我修订一下发表在他们的杂志上，我利用这个机会改进了这篇文章。这篇是那篇的修订版。</em></p>
 <h3 id="最终一致性-在全球范围构建可靠的分布式系统需要在一致性和"><a href="#最终一致性-在全球范围构建可靠的分布式系统需要在一致性和" class="headerlink" title="最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和"></a>最终一致性 - 在全球范围构建可靠的分布式系统需要在一致性和</h3><p>支撑Amazon云计算的基础服务，例如Amazon的S3(Simple Storage Service)，SimpleDB和EC2(Elastic Compute Cloud)提供构建互联网规模计算平台和各种应用所需的资源。放在这些基础服务的需求非常严格；它们需要在安全性、 可伸缩性、 可用性、 性能和成本效率方面都非常优秀，同时为全球数以百万计的客户持续提供服务。</p>
 <p>这些服务底层是全球范围运行的大规模分布式系统。这样的规模带来了额外的挑战，因为当一个系统处理海量请求时，那些低概率事件就会变成必然事件，并且需要在系统设计和架构中预先列出。考虑到这些全球范围的系统，我们普遍使用副本(Replication)技术来保证一致的性能和高可用性。 虽然副本技术让我们更接近目标，但是它不能以完全透明的方式实现它们；在一些条件下，这些服务的用户将会面临使用副本技术带来的后果。</p>
@@ -491,10 +492,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">coursera</a>
               </li>
              
@@ -504,6 +501,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>分布式原理与工程 —— Quorum机制 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
+  <meta name="description" content="Quorum机制是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法">
 <meta name="keywords" content="distributed,system design">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式原理与工程 —— Quorum机制">
 <meta property="og:url" content="http://duanmeng.github.io/2017/12/03/Quorum/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
+<meta property="og:description" content="Quorum机制是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-13T15:40:27.644Z">
+<meta property="og:updated_time" content="2017-12-16T10:58:50.597Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="分布式原理与工程 —— Quorum机制">
-<meta name="twitter:description" content="Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，">
+<meta name="twitter:description" content="Quorum机制是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法">
   
   
     <link rel="icon" href="[object Object]">
@@ -161,18 +161,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Quorum机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法，<a id="more"></a> 其主要数学思想来源于<a href="https://zh.wikipedia.org/wiki/%E9%B8%BD%E5%B7%A2%E5%8E%9F%E7%90%86" target="_blank" rel="external">鸽巢原理</a><sup>1</sup>。</p>
+        <p>Quorum机制是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法 <a id="more"></a> 其主要数学思想来源于<a href="https://zh.wikipedia.org/wiki/%E9%B8%BD%E5%B7%A2%E5%8E%9F%E7%90%86" target="_blank" rel="external">鸽巢原理</a><sup>1</sup>。</p>
 <h3 id="Quorum机制定义"><a href="#Quorum机制定义" class="headerlink" title="Quorum机制定义"></a>Quorum机制定义</h3><p>我们普遍使用副本(Replication)技术来保证一致的性能和高可用性<sup>2</sup>，Quorum是一种简单有效的管理副本的机制，我们先建立如下定以（[2]中也有描述）：</p>
 <blockquote>
 <p>N = 存储数据副本的节点的数量<br>W = 更新成功所需的副本更新成功的数量<br>R = 一次数据对象读取要访问的副本的数量</p>
 </blockquote>
 <p>更新时，只有至少W副本更新成功时才算更新操作成功；读取时，至少要读取R个副本的数据。这样当$W + R &gt; N$时，对于同一个数据对象，更新集合与读取集合一定有重叠，保证了读取的数据中一定有最近更新的值。</p>
-<h3 id="WARO-Write-All-Read-One"><a href="#WARO-Write-All-Read-One" class="headerlink" title="WARO (Write All Read One)"></a>WARO (Write All Read One)</h3><p>WARO是Quorum机制的特例（GFS使用WARO），也就是更新时必须所有的副本都更新成功，而读取时只需要读取一个副本的数据就可以。</p>
+<h3 id="WARO-Write-All-Read-One"><a href="#WARO-Write-All-Read-One" class="headerlink" title="WARO (Write All Read One)"></a>WARO (Write All Read One)</h3><p>WARO是Quorum机制的特例（GFS使用WARO），也就是更新时必须所有的副本都更新成功，而读取 时只需要读取一个副本的数据就可以。</p>
+<h3 id="Quorum机制与一致性"><a href="#Quorum机制与一致性" class="headerlink" title="Quorum机制与一致性"></a>Quorum机制与一致性</h3><p>Quorum本身无法保证强一致性，除非有一个获取最新成功提交的版本号的metadata服务；假设$N = 5, W = 3, R = 3$，数据V<sub>2</sub>提交成功但是只在三个副本真正更新了，副本中数据分布是[V<sub>2</sub>, V<sub>2</sub>, V<sub>2</sub>, V<sub>1</sub>, V<sub>1</sub>]，那么客户端可能读到[V<sub>2</sub>, V<sub>2</sub>, V<sub>1</sub>]，也可能读到[V<sub>2</sub>, V<sub>1</sub>, V<sub>1</sub>]；注意这里的版本V<sub>1</sub>，V<sub>2</sub>是数据本身的版本号不是最新成功提交的版本号，所以无法确认是V<sub>1</sub>还是V<sub>2</sub>；如果要保证强一致性必须继续读取副本，来确定最新至少写入的W个副本也就是提交成功的数据。</p>
 <h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><ol>
 <li><a href="https://zh.wikipedia.org/wiki/Quorum_(分布式系统" target="_blank" rel="external">https://zh.wikipedia.org/wiki/Quorum_(分布式系统</a>)</li>
 <li><a href="https://duanmeng.github.io/2017/11/19/Eventually-Consistent%20-%20Revisited/">https://duanmeng.github.io/2017/11/19/Eventually-Consistent%20-%20Revisited/</a></li>
 </ol>
-<center>未完待续</center>
+
       
 
       
@@ -297,7 +298,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Quorum机制定义"><span class="toc-number">1.</span> <span class="toc-text">Quorum机制定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WARO-Write-All-Read-One"><span class="toc-number">2.</span> <span class="toc-text">WARO (Write All Read One)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">3.</span> <span class="toc-text">参考链接</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Quorum机制定义"><span class="toc-number">1.</span> <span class="toc-text">Quorum机制定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WARO-Write-All-Read-One"><span class="toc-number">2.</span> <span class="toc-text">WARO (Write All Read One)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Quorum机制与一致性"><span class="toc-number">3.</span> <span class="toc-text">Quorum机制与一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">4.</span> <span class="toc-text">参考链接</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -438,10 +439,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">coursera</a>
               </li>
              
@@ -451,6 +448,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">

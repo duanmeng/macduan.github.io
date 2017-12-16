@@ -16,10 +16,12 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-13T15:39:07.450Z">
+<meta property="og:image" content="http://duanmeng.github.io/images/GFS-Architecture.jpg">
+<meta property="og:updated_time" content="2017-12-16T03:38:04.645Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GFS总结">
 <meta name="twitter:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
+<meta name="twitter:image" content="http://duanmeng.github.io/images/GFS-Architecture.jpg">
   
   
     <link rel="icon" href="[object Object]">
@@ -162,7 +164,52 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>本文是阅读完google经典的论文<a href="https://research.google.com/archive/gfs.html" target="_blank" rel="external"><em>The Google File System</em></a>后的总结。 <a id="more"></a></p>
-<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3>
+<h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><ul>
+<li>组件故障是常态，持续监控、错误侦测、容错和自动恢复是系统必须的，</li>
+<li>文件通常是巨大的，IO操作和块大小需要被重新审视，</li>
+<li>大部分是append新数据，随机写非常少，</li>
+<li>提供类似文件系统API，松弛一致性模型。</li>
+</ul>
+<h3 id="Assumptions"><a href="#Assumptions" class="headerlink" title="Assumptions"></a>Assumptions</h3><ul>
+<li>系统是构建在很多廉价的机器上的，</li>
+<li>系统存储的大多数是大文件，</li>
+<li>读负载主要两种，大型流式读和小型随机读，</li>
+<li>写负载主要是大型顺序追加写，</li>
+<li>多个客户端并发读写，</li>
+<li>高可持续带宽比某一次读写操作的低延时更重要。</li>
+</ul>
+<h3 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h3><p>GFS提供和POSIX类似的接口（create, delete, open, close, read and write），也支持快照和并发追加操作。</p>
+<h3 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h3><p><img src="/images/GFS-Architecture.jpg" alt=""></p>
+<ul>
+<li>一个GFS集群是由一个master和多个chunkservers组成，它们可以被多个客户端访问，</li>
+<li>文件被分成多个固定大型的chunk，每个chunk由一个64bit的全局唯一的chunk handle标识，</li>
+<li>Chunkservers以linux files的形式在本地磁盘存储在本地磁盘，默认是3备份，</li>
+<li>master维护metadata，租约管理，垃圾回收和chunk迁移，周期性的与chunkservers通过心跳消息收集状态，</li>
+</ul>
+<h3 id="Chunk-Size"><a href="#Chunk-Size" class="headerlink" title="Chunk Size"></a>Chunk Size</h3><p>一般一个Chunk Size为64MB。</p>
+<h3 id="Single-Master"><a href="#Single-Master" class="headerlink" title="Single Master"></a>Single Master</h3><ul>
+<li>GFS采用Single Master简化了设计，可以利用全局信息进行复杂的chunk placement和副本决策，</li>
+<li>客户端通过master获取chunkservers信息，直接与chunkservers读写数据，这样single master不会成为瓶颈，<ul>
+<li>客户端把文件名和偏移量翻译成chunk index，向master发送包含文件名和chunk index的请求，</li>
+<li>master回复chunk handle和副本位置，客户端会缓存这些信息一段时间，</li>
+<li>客户端向一个副本发送包含chunk handle和byte range的请求，</li>
+<li>接下来客户端就直接与副本交互，直到缓存信息过期或者重新打开文件，</li>
+</ul>
+</li>
+<li>客户端会一次向master请求多个chunk信息，master也会主动把可能要访问的其它chunk信息一并返回，降低master负载。</li>
+</ul>
+<h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><ul>
+<li>master存储三种主要的metadata：<ul>
+<li>文件名，chunk namespace，</li>
+<li>文件名到chunks的映射，</li>
+<li>每个chunk副本的位置。</li>
+</ul>
+</li>
+<li>前两种会被持久化到operation log，master恢复时会读取这个log，</li>
+<li>第三种只在内存中，master在启动和新的chunkservers加入时，master去请求位置信息。</li>
+</ul>
+<h4 id="In-Memory-Data-Structures"><a href="#In-Memory-Data-Structures" class="headerlink" title="In-Memory Data Structures"></a>In-Memory Data Structures</h4><p>Metadata</p>
+
       
 
       
@@ -249,6 +296,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2017/12/16/C-Notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          C++ Cheat Sheet
+        
+      </div>
+    </a>
+  
   
     <a href="/2017/12/03/Quorum/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">分布式原理与工程 —— Quorum机制</div>
@@ -278,7 +334,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">1.</span> <span class="toc-text">场景</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Assumptions"><span class="toc-number">2.</span> <span class="toc-text">Assumptions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interface"><span class="toc-number">3.</span> <span class="toc-text">Interface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Architecture"><span class="toc-number">4.</span> <span class="toc-text">Architecture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chunk-Size"><span class="toc-number">5.</span> <span class="toc-text">Chunk Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Single-Master"><span class="toc-number">6.</span> <span class="toc-text">Single Master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metadata"><span class="toc-number">7.</span> <span class="toc-text">Metadata</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#In-Memory-Data-Structures"><span class="toc-number">7.1.</span> <span class="toc-text">In-Memory Data Structures</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -419,10 +475,6 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">coursera</a>
               </li>
              
@@ -432,6 +484,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
