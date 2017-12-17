@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-17T01:32:08.218Z">
+<meta property="og:updated_time" content="2017-12-17T14:13:04.798Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ Cheat Sheet (keep updating ...)">
 <meta name="twitter:description" content="有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。">
@@ -172,7 +172,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。 <a id="more"></a></p>
-<h3 id="Lvalues-amp-Rvalues"><a href="#Lvalues-amp-Rvalues" class="headerlink" title="Lvalues &amp; Rvalues"></a>Lvalues &amp; Rvalues</h3><ul>
+<h2 id="1-Lvalues-amp-Rvalues"><a href="#1-Lvalues-amp-Rvalues" class="headerlink" title="1 Lvalues &amp; Rvalues"></a>1 Lvalues &amp; Rvalues</h2><ul>
 <li>lvalue和rvalue继承自C语言，在C语言中是这样定义的：<strong>能在赋值操作左边的是lvalue而rvalue不能</strong></li>
 <li>但是在C++中则lvalue和rvalue的区别则复杂很多，大致说来就是<strong>一个对象被用作右值时，用的是对象的值（内容），一个对象被用作左值时，用的是对象的标识（内存中的位置）</strong></li>
 <li>对于运算符（赋值，取址等操作）来说，不同之处是<strong>运算符需要lvalue还是rvalue，返回的是lvalue还是rvalue</strong>；重要的一点就是可以在需要rvalue的地方使用lvalue）在需要lvalue的地方则不能使用rvalue（比如std::move）<ul>
@@ -184,6 +184,25 @@
 </li>
 </ul>
 <p><strong>参考</strong>： <em>C++ Primer 5th Edition 4.1.1 P135</em></p>
+<h2 id="2-Named-Cast"><a href="#2-Named-Cast" class="headerlink" title="2 Named Cast"></a>2 Named Cast</h2><p>Named cast背后的思想就是让程序员显示的表达转型（cast）的意愿<sup>1</sup>。</p>
+<h3 id="2-1-static-cast"><a href="#2-1-static-cast" class="headerlink" title="2.1 static_cast"></a>2.1 static_cast</h3><p>static_cast可用于C风格的转型（int to double， double to int， char to int等），const类型到non-const类型的转换，相同层级类指针之间的转型，子类指针向基类指针转型，基类指针向子类指针转型（不安全，必须确认指向的对象是子类对象）。</p>
+<h3 id="2-2-const-cast"><a href="#2-2-const-cast" class="headerlink" title="2.2 const_cast"></a>2.2 const_cast</h3><p>const_cast用于去除const特性。</p>
+<h3 id="2-3-reinterpret-cast"><a href="#2-3-reinterpret-cast" class="headerlink" title="2.3 reinterpret_cast"></a>2.3 reinterpret_cast</h3><p>reinterpret_cast用于不安全的指针之间转型和int到指针转型，必须清楚其带来的后果。</p>
+<h3 id="2-4-dynamic-cast"><a href="#2-4-dynamic-cast" class="headerlink" title="2.4 dynamic_cast"></a>2.4 dynamic_cast</h3><p>dynamic_cast用于运行时具有继承关系的类之间（子类到基类，基类到子类，兄弟类之间）的指针和引用的安全转型，如果失败指针转型返回空，引用转型抛出bad_cast异常。<strong>但是</strong>G和B家的C++编程规范都是禁止使用dynamic_cast；除非在UT代码中，比如测试工厂模式类创建的对象类型，或者管理对象与它们的mock之间的关系。为什么要禁止呢，主要是容易出错，会造成判断分支过多不易维护，可以用其它机制比如多态来代替。这里贴出G家编程规范对其缺点描述的原文：</p>
+<p><strong>Cons</strong></p>
+<blockquote>
+<p>Querying the type of an object at run-time frequently means a design problem. Needing to know the type of an object at runtime is often an indication that the design of your class hierarchy is flawed.</p>
+<p></p><p><br>Undisciplined use of RTTI makes code hard to maintain. It can lead to type-based decision trees or switch statements scattered throughout the code, all of which must be examined when making further changes.</p>
+</blockquote>
+<p><strong>Decision</strong></p>
+<blockquote>
+<p>RTTI has legitimate uses but is prone to abuse, so you must be careful when using it. You may use it freely in unittests, but avoid it when possible in other code. In particular, think twice before using RTTI in new code. If you find yourself needing to write code that behaves differently based on the class of an object, consider one of the following alternatives to querying the type:</p>
+<ul>
+<li>Virtual methods are the preferred way of executing different code paths depending on a specific subclass type. This puts the work within the object itself.</li>
+<li>If the work belongs outside the object and instead in some processing code, consider a double-dispatch solution, such as the Visitor design pattern. This allows a facility outside the object itself to determine the type of class using the built-in type system.</li>
+</ul>
+</blockquote>
+<p><strong>参考</strong><br>1 TC++PL 11.5.2. Named Casts<br>2 <a href="https://google.github.io/styleguide/cppguide.html#Run-Time_Type_Information__RTTI_" target="_blank" rel="external">https://google.github.io/styleguide/cppguide.html#Run-Time_Type_Information__RTTI_</a><br>3 <a href="https://google.github.io/styleguide/cppguide.html#Casting" target="_blank" rel="external">https://google.github.io/styleguide/cppguide.html#Casting</a></p>
 
       
 
@@ -327,7 +346,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Lvalues-amp-Rvalues"><span class="toc-number">1.</span> <span class="toc-text">Lvalues & Rvalues</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Lvalues-amp-Rvalues"><span class="toc-number">1.</span> <span class="toc-text">1 Lvalues & Rvalues</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Named-Cast"><span class="toc-number">2.</span> <span class="toc-text">2 Named Cast</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-static-cast"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 static_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-const-cast"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 const_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-reinterpret-cast"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 reinterpret_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-dynamic-cast"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 dynamic_cast</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>

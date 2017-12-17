@@ -17,7 +17,7 @@
 <meta property="og:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://duanmeng.github.io/images/GFS-Architecture.jpg">
-<meta property="og:updated_time" content="2017-12-16T03:38:04.645Z">
+<meta property="og:updated_time" content="2017-12-17T12:34:14.756Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GFS总结">
 <meta name="twitter:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
@@ -178,7 +178,7 @@
 <li>组件故障是常态，持续监控、错误侦测、容错和自动恢复是系统必须的，</li>
 <li>文件通常是巨大的，IO操作和块大小需要被重新审视，</li>
 <li>大部分是append新数据，随机写非常少，</li>
-<li>提供类似文件系统API，松弛一致性模型。</li>
+<li>提供类似文件系统API，放松了一致性模型。</li>
 </ul>
 <h3 id="Assumptions"><a href="#Assumptions" class="headerlink" title="Assumptions"></a>Assumptions</h3><ul>
 <li>系统是构建在很多廉价的机器上的，</li>
