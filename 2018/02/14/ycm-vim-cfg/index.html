@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-15T09:51:54.418Z">
+<meta property="og:updated_time" content="2018-02-15T10:04:45.837Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YouCompleteMe配置与我的vimrc备份">
 <meta name="twitter:description" content="作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。">
@@ -166,7 +166,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，<br>其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。 <a id="more"></a></p>
+        <p>作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。 <a id="more"></a></p>
 <p>我用vundle安装和管理插件，YCM的官方安装文档也是推荐vundle，但是我配置好vimrc之后用执行vundle的PlugInstall时发现速度巨慢，其实这个过程本质就是在.vim/bundle中执行<em>git clone <a href="https://github.com/Valloric/YouCompleteMe.git" target="_blank" rel="external">https://github.com/Valloric/YouCompleteMe.git</a></em>，之后可以在YouCompleteMe目录中执行<em>git submodule update –init –recursive</em>。 后面的安装步骤非常简单，</p>
 <blockquote>
 <p>cd ~/.vim/bundle/YouCompleteMe<br>./install.py –clang-completer</p>
