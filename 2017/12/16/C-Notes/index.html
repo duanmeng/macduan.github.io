@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-17T14:13:04.798Z">
+<meta property="og:updated_time" content="2018-02-04T07:47:12.836Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++ Cheat Sheet (keep updating ...)">
 <meta name="twitter:description" content="有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。">
@@ -199,6 +199,29 @@
 </ul>
 </blockquote>
 <p><strong>参考</strong><br>1 TC++PL 11.5.2. Named Casts<br>2 <a href="https://google.github.io/styleguide/cppguide.html#Run-Time_Type_Information__RTTI_" target="_blank" rel="external">https://google.github.io/styleguide/cppguide.html#Run-Time_Type_Information__RTTI_</a><br>3 <a href="https://google.github.io/styleguide/cppguide.html#Casting" target="_blank" rel="external">https://google.github.io/styleguide/cppguide.html#Casting</a></p>
+<h2 id="3-pthread-amp-lpthread"><a href="#3-pthread-amp-lpthread" class="headerlink" title="3 -pthread &amp; -lpthread"></a>3 -pthread &amp; -lpthread</h2><ul>
+<li>-lpthread就是链接选项，告知编译器链接pthread库。</li>
+<li>-pthread告诉编译器链接pthread库，同时告知编译器预处理时设置_REENTRANT宏，使得libc的头文件选择thread-safe的实现。</li>
+</ul>
+<p>下面示例代码<sup>1</sup>很好的展示了区别</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">gcc -pthread -E -dM test.c &gt; dm.pthread.txt</span></div><div class="line"><span class="meta">$</span><span class="bash">gcc          -E -dM test.c &gt; dm.nopthread.txt</span></div><div class="line"><span class="meta">$</span><span class="bash">diff dm.pthread.txt dm.nopthread.txt </span></div><div class="line">152d151</div><div class="line">&lt; #define _REENTRANT 1</div><div class="line">208d206</div><div class="line">&lt; #define __USE_REENTRANT 1</div></pre></td></tr></table></figure>
+<p></p><p><br>为什么diff结果为什么有两个宏被设置了呢<sup>2</sup></p>
+<blockquote>
+<ul>
+<li><p>Defining _REENTRANT causes the compiler to use thread safe (i.e. re-entrant) versions of several functions in the C library. </p>
+</li>
+<li><p>It simply defined _REENTRANT for the preprocessor. Somewhere in the associated code, you’ll probably find #ifdef _REENTRANT or #if defined(_REENTRANT) in at least a few places.</p>
+</li>
+<li><p>Also note that the name “_REENTRANT: is in the implementer’s name space (any name starting with an underscore followed by another underscore or a capital letter is), so defining it means you’ve stepped outside what the standard defines (at least the C or C++ standards).</p>
+</li>
+</ul>
+</blockquote>
+<p>参考链接</p>
+<p>1 <a href="https://stackoverflow.com/questions/23250863/difference-between-pthread-and-lpthread-while-compiling" target="_blank" rel="external">https://stackoverflow.com/questions/23250863/difference-between-pthread-and-lpthread-while-compiling</a><br>2 <a href="https://stackoverflow.com/questions/2601753/what-is-the-reentrant-flag" target="_blank" rel="external">https://stackoverflow.com/questions/2601753/what-is-the-reentrant-flag</a></p>
+<h2 id="4-一个String类展示四种constructor"><a href="#4-一个String类展示四种constructor" class="headerlink" title="4 一个String类展示四种constructor"></a>4 一个String类展示四种constructor</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstring&gt; // strlen, strcpy</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utility&gt; // move</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt; // cout</span></span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">String</span> <span class="title">final</span> &#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    String() : _data(<span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1</span>]) &#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Default Constructor\n"</span>; &#125;</div><div class="line"></div><div class="line">    explicit String(const char* src) : _data(new char[std::strlen(src) + 1]) &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"char* constructor\n"</span>;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">strcpy</span>(_data, src);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ~String() &#123; <span class="keyword">delete</span> []_data; &#125;</div><div class="line"></div><div class="line">    String(<span class="keyword">const</span> String&amp; rhs) : _data(<span class="keyword">new</span> <span class="keyword">char</span>[rhs.size() + <span class="number">1</span>]) &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"copy constructor\n"</span>;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">strcpy</span>(_data, rhs._data);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    String&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> String&amp; rhs) &#123; <span class="comment">// copy &amp; swap idiom</span></div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"assign constructor\n"</span>;</div><div class="line">        <span class="function">String <span class="title">tmp</span><span class="params">(rhs)</span></span>;</div><div class="line">        <span class="built_in">std</span>::swap(_data, tmp._data);</div><div class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    String(String&amp;&amp; rhs) : _data(rhs._data) &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"move copy constructor\n"</span>;</div><div class="line">        rhs._data = <span class="literal">nullptr</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    String&amp; <span class="keyword">operator</span>=(String&amp;&amp; rhs) &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"move assign constructor\n"</span>;</div><div class="line">        <span class="built_in">std</span>::swap(_data, rhs._data);</div><div class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">size_t</span> size() <span class="keyword">const</span> &#123; <span class="keyword">return</span> <span class="built_in">std</span>::<span class="built_in">strlen</span>(_data); &#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="keyword">char</span>* _data;</div><div class="line"></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">char</span>**)</span> </span>&#123;</div><div class="line">    String defaultConstructor;</div><div class="line">    <span class="function">String <span class="title">charPointerConstructor</span><span class="params">(<span class="string">"hello"</span>)</span></span>;</div><div class="line">    <span class="function">String <span class="title">copyConstructor1</span><span class="params">(charPointerConstructor)</span></span>;</div><div class="line">    String copyConstructor2 = charPointerConstructor;</div><div class="line">    defaultConstructor = copyConstructor1; <span class="comment">// copy then assign constructor</span></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; copyConstructor1.size() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    String moveCopyConstructor(std::move(copyConstructor1));</div><div class="line">    moveCopyConstructor = String(<span class="string">"hello"</span>); <span class="comment">// char pointer constructor then move assign constructor</span></div><div class="line">    moveCopyConstructor = <span class="built_in">std</span>::move(copyConstructor2); <span class="comment">// move assign</span></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; copyConstructor1.size() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>$./a.out<br>Default Constructor<br>char<em> constructor<br>copy constructor<br>copy constructor<br>assign constructor<br>copy constructor<br>5<br>move copy constructor<br>char</em> constructor<br>move assign constructor<br>move assign constructor<br>Segmentation fault (core dumped)</p>
+</blockquote>
 
       
 
@@ -351,7 +374,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Lvalues-amp-Rvalues"><span class="toc-number">1.</span> <span class="toc-text">1 Lvalues & Rvalues</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Named-Cast"><span class="toc-number">2.</span> <span class="toc-text">2 Named Cast</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-static-cast"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 static_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-const-cast"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 const_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-reinterpret-cast"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 reinterpret_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-dynamic-cast"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 dynamic_cast</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Lvalues-amp-Rvalues"><span class="toc-number">1.</span> <span class="toc-text">1 Lvalues & Rvalues</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Named-Cast"><span class="toc-number">2.</span> <span class="toc-text">2 Named Cast</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-static-cast"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 static_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-const-cast"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 const_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-reinterpret-cast"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 reinterpret_cast</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-dynamic-cast"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 dynamic_cast</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-pthread-amp-lpthread"><span class="toc-number">3.</span> <span class="toc-text">3 -pthread & -lpthread</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-一个String类展示四种constructor"><span class="toc-number">4.</span> <span class="toc-text">4 一个String类展示四种constructor</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -380,7 +403,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2017 duanmeng
+    		&copy; 2018 duanmeng
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -492,6 +515,10 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">coursera</a>
               </li>
              
@@ -501,10 +528,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
