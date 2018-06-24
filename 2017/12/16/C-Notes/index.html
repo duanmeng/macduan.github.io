@@ -204,7 +204,7 @@
 <li>-pthread告诉编译器链接pthread库，同时告知编译器预处理时设置_REENTRANT宏，使得libc的头文件选择thread-safe的实现。</li>
 </ul>
 <p>下面示例代码<sup>1</sup>很好的展示了区别</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span><span class="bash">gcc -pthread -E -dM test.c &gt; dm.pthread.txt</span></div><div class="line"><span class="meta">$</span><span class="bash">gcc          -E -dM test.c &gt; dm.nopthread.txt</span></div><div class="line"><span class="meta">$</span><span class="bash">diff dm.pthread.txt dm.nopthread.txt </span></div><div class="line">152d151</div><div class="line">&lt; #define _REENTRANT 1</div><div class="line">208d206</div><div class="line">&lt; #define __USE_REENTRANT 1</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span>gcc -pthread -E -dM test.c &gt; dm.pthread.txt</div><div class="line"><span class="meta">$</span>gcc          -E -dM test.c &gt; dm.nopthread.txt</div><div class="line"><span class="meta">$</span>diff dm.pthread.txt dm.nopthread.txt </div><div class="line">152d151</div><div class="line">&lt; #define _REENTRANT 1</div><div class="line">208d206</div><div class="line">&lt; #define __USE_REENTRANT 1</div></pre></td></tr></table></figure>
 <p></p><p><br>为什么diff结果为什么有两个宏被设置了呢<sup>2</sup></p>
 <blockquote>
 <ul>
@@ -347,7 +347,7 @@
   
   
     <a href="/2017/12/07/gfs-notes/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">GFS总结 (未完待续)</div>
+      <div class="article-nav-title">[译]GFS (未完待续)</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -507,15 +507,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">multithreading</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -6,21 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>GFS总结 (未完待续) | Macduan&#39;s Notes</title>
+  <title>[译]GFS (未完待续) | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文是阅读完google经典的论文The Google File System后的总结。">
+  <meta name="description" content="据说The Google File System是google老三篇中最有诚意的一篇，本文是该论文的翻译，尽量基于中文阅读习惯和用短句的论文撰写习惯翻译，对于自己感觉翻译不太准确或者可能有歧义的地方会贴上英文原文。">
 <meta name="keywords" content="distributed,google">
 <meta property="og:type" content="article">
-<meta property="og:title" content="GFS总结 (未完待续)">
+<meta property="og:title" content="[译]GFS (未完待续)">
 <meta property="og:url" content="http://duanmeng.github.io/2017/12/07/gfs-notes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
+<meta property="og:description" content="据说The Google File System是google老三篇中最有诚意的一篇，本文是该论文的翻译，尽量基于中文阅读习惯和用短句的论文撰写习惯翻译，对于自己感觉翻译不太准确或者可能有歧义的地方会贴上英文原文。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://duanmeng.github.io/images/GFS-Architecture.jpg">
-<meta property="og:updated_time" content="2017-12-31T06:11:24.085Z">
+<meta property="og:image" content="http://duanmeng.github.io/images/gfs-consistance.JPG">
+<meta property="og:image" content="http://duanmeng.github.io/images/gfs-write.JPG">
+<meta property="og:updated_time" content="2018-03-11T12:00:09.256Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="GFS总结 (未完待续)">
-<meta name="twitter:description" content="本文是阅读完google经典的论文The Google File System后的总结。">
+<meta name="twitter:title" content="[译]GFS (未完待续)">
+<meta name="twitter:description" content="据说The Google File System是google老三篇中最有诚意的一篇，本文是该论文的翻译，尽量基于中文阅读习惯和用短句的论文撰写习惯翻译，对于自己感觉翻译不太准确或者可能有歧义的地方会贴上英文原文。">
 <meta name="twitter:image" content="http://duanmeng.github.io/images/GFS-Architecture.jpg">
   
   
@@ -156,7 +158,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      GFS总结 (未完待续)
+      [译]GFS (未完待续)
     </h1>
   
 
@@ -169,52 +171,84 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文是阅读完google经典的论文<a href="https://research.google.com/archive/gfs.html" target="_blank" rel="external"><em>The Google File System</em></a>后的总结。 <a id="more"></a></p>
-<h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><ul>
-<li>组件故障是常态，持续监控、错误侦测、容错和自动恢复是系统必须的，</li>
-<li>文件通常是巨大的，IO操作和块大小需要被重新审视，</li>
-<li>大部分是append新数据，随机写非常少，</li>
-<li>提供类似文件系统API，放松了一致性模型。</li>
-</ul>
-<h3 id="Assumptions"><a href="#Assumptions" class="headerlink" title="Assumptions"></a>Assumptions</h3><ul>
-<li>系统是构建在很多廉价的机器上的，</li>
-<li>系统存储的大多数是大文件，</li>
-<li>读负载主要两种，大型流式读和小型随机读，</li>
-<li>写负载主要是大型顺序追加写，</li>
-<li>多个客户端并发读写，</li>
-<li>高可持续带宽比某一次读写操作的低延时更重要。</li>
-</ul>
-<h3 id="Interface"><a href="#Interface" class="headerlink" title="Interface"></a>Interface</h3><p>GFS提供和POSIX类似的接口（create, delete, open, close, read and write），也支持快照和并发追加操作。</p>
-<h3 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h3><p><img src="/images/GFS-Architecture.jpg" alt=""></p>
+        <p>据说<a href="https://research.google.com/archive/gfs.html" target="_blank" rel="external"><em>The Google File System</em></a>是google老三篇中最有诚意的一篇，本文是该论文的翻译，尽量基于中文阅读习惯和用短句的论文撰写习惯翻译，对于自己感觉翻译不太准确或者可能有歧义的地方会贴上英文原文。 <a id="more"></a></p>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>我们设计并实施了Google文件系统，一种用于大规模分布式数据密集型应用的，可扩展的分布式文件系统。它虽然运行在廉价普通机器上，但是提供容错和向海量客户交付了高集成性能（high aggregate performa）。</p>
+<p>在与早期的分布式文件系统共享相同的设计目标的同时，我们的设计驱动于对我们应用工作负载和技术环境的观察，它无论是当前还是未来都反映了与早期文件系统显著的不同的假设。这导致我们重新审视传统选择，从根本上探索不同的设计要点。</p>
+<p>这个文件系统已经成功满足了我们的存储需求。它作为存储平台被广泛部署在Google内部，用来存储被我们服务生成和处理的数据以及研究和开发工作需要的海量数据集。迄今为止最大的集群提供了数百T的存储（译者注：现在T级别的不算大，但在本文发表时还是很猛的），它们分布在超过一千台机器上的数千块磁盘上，并且被数百个客户端并发访问。</p>
+<p>在本文中，我们提出（present）了文件系统接口扩展旨在支持分布式应用，讨论了我们设计的许多方面，以及来自微基准（micro-benchmarks）和真实使用的测试报告（report measurements）。</p>
+<h1 id="类别和主题描述"><a href="#类别和主题描述" class="headerlink" title="类别和主题描述"></a>类别和主题描述</h1><p>分布式文件系统</p>
+<h1 id="通用术语"><a href="#通用术语" class="headerlink" title="通用术语"></a>通用术语</h1><p>设计，可靠性，性能，测量</p>
+<h1 id="关键词"><a href="#关键词" class="headerlink" title="关键词"></a>关键词</h1><p>容错，可扩展性，数据存储，存储集群</p>
+<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1. 介绍"></a>1. 介绍</h1><p>我们设计并实施了Google文件系统来满足Google迅速增长的数据处理需求。GFS与早期的分布式文件系统共享许多相同的设计目标，比如性能，可扩展性，可靠性和可用性。然而，它的设计驱动于对我们应用工作负载和技术环境的关键观察，它无论是当前还是未来都与反映了与早期文件系统显著的不同的假设。我们重新审视了传统选择，从根本上探索不同的设计要点。</p>
+<p><strong>第一，组件故障是常态</strong>（the norm rather than the exception）。该文件系统由数百甚至数千台存由廉价普通（commodity）硬件组装的存储机器，并且被大量的客户机器访问。组件的数量和质量几乎保证了任何时间都有一些组件失效甚至有些无法从当前错误中恢复。我们见过由应用bugs，操作系统bugs和人为错误，还有硬盘错误，内存，连接器，网络和电源供应引起的问题。因此，持续监控，错误探测，容错和自动恢复必须集成到系统中。</p>
+<p><strong>第二，传统标准下文件都很大</strong>。GB级的文件很常见。每个文件通常包含许多应用对象，比如Web文档。当我们通常要处理快速增长数据集组成的数十亿的对象时，不适合用数十亿大约KB大小的文件去管理。因此，设计假设和参数，例如I/O操作，块大小（blocksize）必须被重新审视（revisited）。</p>
+<p><strong>第三，大部分文件是因追加数据被突变（mutated）而不是覆盖已有数据</strong>。某个文件里的随机写实践上不存在。一旦写入这些文件只会被读取而且经常是顺序读。多种数据都共有（share）这些特征。一些可能组成数据仓库（constitute large repositories）被数据分析程序扫描。一些可能是运行应用持续生成的数据流。一些可能是归档的数据。一些可能是一台机器产出在另一台机器同时或者后面适时（whether simultaneously or later in time）被处理的中间数据， 基于这种大文件访问模式，追加成为性能优化和原子性保证的关注点，与此同时客户端缓存数据块失去了吸引力。</p>
+<p><strong>第四，综合设计应用和文件系统API，通过增加灵活性，对整个系统有好处</strong>。例如，我们放松了（relaxed）GFS的一致性模型来极大的简化了该文件系统且没有对应用施加繁重的负担。我们还引入了一种原子追加操作，这样多个客户端可以对同一文件并发追加，而它们之间不需要额外的同步。本文后面会详细讨论这些。</p>
+<p>多个GFS集群目前为不同的目的被部署了。最大的有1000个存储节点，将近300TB的磁盘存储，且被不同机器上的数百个客户端大量持续访问。</p>
+<h1 id="2-设计概览"><a href="#2-设计概览" class="headerlink" title="2. 设计概览"></a>2. 设计概览</h1><h2 id="2-1-假设"><a href="#2-1-假设" class="headerlink" title="2.1 假设"></a>2.1 假设</h2><p>在为我们需求设计文件系统时，我们被挑战与机会并存的假设指导。我们前面提到了一些关键观察，现在展示（lay out）我们假设的更多细节。</p>
 <ul>
-<li>一个GFS集群是由一个master和多个chunkservers组成，它们可以被多个客户端访问，</li>
-<li>文件被分成多个固定大型的chunk，每个chunk由一个64bit的全局唯一的chunk handle标识，</li>
-<li>Chunkservers以linux files的形式在本地磁盘存储在本地磁盘，默认是3备份，</li>
-<li>master维护metadata，租约管理，垃圾回收和chunk迁移，周期性的与chunkservers通过心跳消息收集状态，</li>
+<li><strong>该系统由经常故障的廉价日用硬件组装</strong>（inexpensive commodity components）。它在日常工作中必须持续自我监控和探测，容错和及时从组件故障中恢复。</li>
+<li><strong>该系统存储了适当量的（a modest number of）大文件</strong>。我们预计百万个文件，每个一般100MB或者更大。多个GB大小的文件很常见，应该被有效管理。小文件必须被支持，但不需要专门优化。</li>
+<li><strong>工作负载主要由两类读组成：大量流式读和少量随机读</strong>。在大量流式读中，单个操作一般读数百KB，更常见的是1MB或者更多。来自同一客户端的成功操作经常读取一个文件的相邻区域。一次少量随机读一般在任意偏移上读取数KB。性能敏感的应用往往批量和排序它们的少量读来有规律读取文件而不是前后交叉（batch and sort their small reads rather than go back and forth）。</li>
+<li><strong>工作负载还包括很多大量顺序写，追加数据到文件中</strong>。通常操作的大小和读一样。任意位置随机写被支持，但是不必高效。</li>
+<li><strong>该系统必须高效的实现明确的语义来支持多个客户端并发追加数据到同一文件</strong>。我们的文件经常被用作生产消费者队列或者多路归并。数百个生产者，每个机器运行一个，将会并发追加一个文件。减少原子性中同步的开销是必要的。文件可能稍后被读取，或者一个消费者同时读取这个文件。</li>
+<li><strong>高可持续带宽比低延迟更重要</strong>。我们目标应用大部分都非常重视高速批处理数据，很少有对单次读写有及时响应的需求。</li>
 </ul>
-<h3 id="Chunk-Size"><a href="#Chunk-Size" class="headerlink" title="Chunk Size"></a>Chunk Size</h3><p>一般一个Chunk Size为64MB。</p>
-<h3 id="Single-Master"><a href="#Single-Master" class="headerlink" title="Single Master"></a>Single Master</h3><ul>
-<li>GFS采用Single Master简化了设计，可以利用全局信息进行复杂的chunk placement和副本决策，</li>
-<li>客户端通过master获取chunkservers信息，直接与chunkservers读写数据，这样single master不会成为瓶颈，<ul>
-<li>客户端把文件名和偏移量翻译成chunk index，向master发送包含文件名和chunk index的请求，</li>
-<li>master回复chunk handle和副本位置，客户端会缓存这些信息一段时间，</li>
-<li>客户端向一个副本发送包含chunk handle和byte range的请求，</li>
-<li>接下来客户端就直接与副本交互，直到缓存信息过期或者重新打开文件，</li>
-</ul>
-</li>
-<li>客户端会一次向master请求多个chunk信息，master也会主动把可能要访问的其它chunk信息一并返回，降低master负载。</li>
-</ul>
-<h3 id="Metadata"><a href="#Metadata" class="headerlink" title="Metadata"></a>Metadata</h3><ul>
-<li>master存储三种主要的metadata：<ul>
-<li>文件名，chunk namespace，</li>
-<li>文件名到chunks的映射，</li>
-<li>每个chunk副本的位置。</li>
-</ul>
-</li>
-<li>前两种会被持久化到operation log，master恢复时会读取这个log，</li>
-<li>第三种只在内存中，master在启动和新的chunkservers加入时，master去请求位置信息。</li>
-</ul>
-<h4 id="In-Memory-Data-Structures"><a href="#In-Memory-Data-Structures" class="headerlink" title="In-Memory Data Structures"></a>In-Memory Data Structures</h4><p>Metadata</p>
+<h2 id="2-2-接口"><a href="#2-2-接口" class="headerlink" title="2.2 接口"></a>2.2 接口</h2><p>GFS虽然没有实现标准的API例如POSIX，但是提供了类似的文件系统接口。文件在目录中按层级组织，路径名字标识。我们支持常规操作来创建，删除，打开，关闭，读取和写入文件。此外，GFS支持了快照和记录追加操作。快照用低代价创建文件副本或者目录树。记录追加允许多个客户端并发追加数据到相同文件并且保证每个客户端追加的原子性。实现结果的多路归并和多个客户端同时追加的生产消费者队列且不需要额外锁非常有用。我们发现这类文件对于构建分布式应用非常有价值。快照和追加记录将分别在3.4和3.3节讨论。</p>
+<h2 id="2-3-架构"><a href="#2-3-架构" class="headerlink" title="2.3 架构"></a>2.3 架构</h2><center><img src="/images/GFS-Architecture.jpg" alt=""></center><br><center>图1 GFS架构</center>
+
+<p>如图1所示，一个GFS集群由一个master和多个chunkservers组成且被多个客户端访问。每个都是运行用户进程的普通Linux机器。只要机器资源允许，可以接受一个chunkserver和一个客户端可以运行在同一台机器上和不稳定应用代码（flaky application code）引起的不稳定性。文件被分成固定大小的chunks。每个chunk在创建时master会分配一个不可变且全局唯一的64位chunk句柄（chunk handle）来标识它。Chunkservers在本地磁盘以Linux文件形式存储chunks，通过chunk句柄和字节区间（chunk handle and byte range）读写chunk数据。为了可靠性，每个chunk在多个chunkservers上有副本（replica）。我们默认存储三个副本，但是用户可以为文件命名空间不同区域指定副本级别。</p>
+<p>master维护了所有文件系统的运元数据（metadata）。它包括命名空间，访问控制信息，文件到chunks的映射和当前chunks的位置。master还控制系统范围的活动，例如chunk租约（chunk lease）管理，孤儿chunk（orphaned chunk）垃圾回收和chunk在chunkserver间迁移。master周期性地发送心跳消息来传递指令和收集状态。GFS客户端代码链接到每个分布式应用，它实现了文件系统API，并且根据应用程序行为与master和chunkservers通信来读写数据。</p>
+<p>客户端与master交互进行元数据操作，但是所有数据承载（data-bearing）通信直接与chunkservers进行。我们不提供POSIX API，因此不需要深入到（hookin）linux vnode层。无论是客户端还是chunkserver都不缓存数据。因为大部分应用流式读超大文件或者有太巨大而无法缓存的工作数据集，所以客户端缓存没有任何好处。没有了缓存通过消除缓存一致性问题（cache coherence）简化了客户端和系统整体。（然而，客户端的确会缓存元数据。）Chunkservers不需要缓存文件数据，因为chunks被存储为本地文件，所以Linux的缓冲区缓存在内存中已经保留了经常被访问的数据。</p>
+<h2 id="2-4-单Master"><a href="#2-4-单Master" class="headerlink" title="2.4 单Master"></a>2.4 单Master</h2><p>只有一个Master极大地简化了我们的设计，使得Master能够使用全局信息进行复杂的chunk放置（chunk placement）和副本决策（replica decision）。然而，我们必须最小化master对读写的参与使其不成为瓶颈。客户端从不通过master读写文件数据。相反，客户端询问master应该与哪个chunkservers联系。它在有限时间内缓存这个信息并且直接许多后续操作都直接与chunkservers交互。</p>
+<p>让我们结合图1用一次简单的读来解释交互过程。首先，使用固定大小的chunk，客户端将应用指定文件名字和字节偏移翻译成文件中的chunk index。然后，它向master发送一个包含文件名和chunk index的请求。Master回复相应的chunk handle和副本位置。客户端用文件名和chunk index作为键（key）缓存这个信息。</p>
+<p>客户端最后向其中一个副本，很有可能是最近的一个，发送请求。这个请求包含了chunk handle和chunk内的字节区间。后续读取相同chunk不再需要client-master交互直到缓存信息过期或者文件被重新打开。事实上，客户端一次请求中一般请求多个chunks，master也可以在回复中包含紧跟着那些被请求的chunks的信息。这个额外的信息避免了一些未来的client-master交互，几乎没有额外代价。</p>
+<h2 id="2-5-Chunk-Size"><a href="#2-5-Chunk-Size" class="headerlink" title="2.5 Chunk Size"></a>2.5 Chunk Size</h2><p>Chunk size是关键设计因素之一。我们选择了64MB，它比常规文件系统block size大很多。每个chunk副本作为一个普通Linux文件存储在一台chunkserver上，仅在需要的时候扩展。惰性空间分配避免了内部碎片造成的空间浪费，这可能是最大的反对大chunk size的原因。</p>
+<p>大chunk size有一些重要优势。首先，它减少了客户端与master交互的需求，因为相同chunk上的读写只需要向master的一次初始请求获取chunk位置信息。这个减少对我们的工作负载至关重要，因为应用基本上顺序读写大文件。甚至对于小型随机读，客户端可以方便地缓存一个多TB（multi-TB）工作集的所有chunk位置信息。然后，因为对于一个大chunk客户端很可能对一个给定的chunk持续执行多次操作，它可以通过对一个chunkserver在一定时间内保持一个持久的TCP连接来减少网络开销（network overhead）。最后，它减少了存储在master上的元数据大小。这使得我们可以把元数据存储在内存，这也带来了其它好处，我们将在2.6.1节讨论。</p>
+<p>在另一个方面，大chunks size即使有惰性空间分配还是有缺点的。一个小文件由少量chunks，可能一个chunk组成。如果许多客户端访问相同的文件（译者注：就是这些小文件），存储这些chunks的chunkservers可能变成热点。在实践中，热点问题还不是主要问题，因为我们的应用大部分顺序读大mult-chunk文件。</p>
+<p>然而，热点确实出现了，当GFS在一个批队列（batch-queue）系统中被第一次使用时：一个单chunk可执行文件被写入GFS，然后在几百台机器上同时启动。少数几个存储这个可执行文件的chunkservers被几百个并发请求打爆了（overloaded）。我们通过增加这种文件的副本数量和错开batch-queue系统错开应用启动时间修复了这个问题。一个潜在的长期解决方案是允许客户端在这种情况下从其它客户端读取数据。</p>
+<h2 id="2-6-元数据"><a href="#2-6-元数据" class="headerlink" title="2.6 元数据"></a>2.6 元数据</h2><p>Master存储了3种主要类型的元数据：文件和chunk命名空间（namespace），文件到chunks的映射和每个chunk副本的位置。所有元数据保存在master的内存中。前两种类型（namespaces和file-to-chunk mapping）也会被通过记录突变（mutations）操作日志（by logging mutations to an operation log）存储在master本地磁盘和复制到远端机器。使用日志使得我们可以简单，可靠地更新master状态和在master崩溃时保持一致性。Master不持久化chunk位置信息。相反，它在启动时向每个chunkserver询问chunk位置信息，和某个chunkserver加入集群时询问。</p>
+<h3 id="2-6-1-内存数据结构（In-Memory-Data-Structure）"><a href="#2-6-1-内存数据结构（In-Memory-Data-Structure）" class="headerlink" title="2.6.1 内存数据结构（In-Memory Data Structure）"></a>2.6.1 内存数据结构（In-Memory Data Structure）</h3><p>因为元数据存储在内存中，master操作非常快。此外，master可以后台方便和高效地周期性扫描它的整个状态。周期性扫描被用于实现chunk垃圾回收，chunkserver故障时副本重复制（re-replication），chunk迁移来均衡负载和跨chunkservers磁盘空间。4.3和4.4节将会进一步讨论这些活动。</p>
+<p>这种内存唯一（memory-only）方法的一个潜在担忧是chunks数量，因此整个系统容量受限于master的内存大小。这在实践中不是个严重问题。Master为每个64MBchunk维护不到64字节的元数据。大多数chunks是满的，因为大多数文件包含许多chunks，只有这些文件的最后一个chunk可能部分填充。类似的，文件命名空间数据一般需要不到64字节每个文件，因为它使用前缀压缩将文件名存储在一起。</p>
+<p>如果必须支持更大规模的文件系统，相对于存储元数据在内存带来的简单性，可靠性，性能和灵活性，添加额外内存只是很小的代价。</p>
+<h3 id="2-6-2-Chunk位置"><a href="#2-6-2-Chunk位置" class="headerlink" title="2.6.2 Chunk位置"></a>2.6.2 Chunk位置</h3><p>Master不持久保存给定chunk存储在哪个chunkservers的记录。它启动时只是从chunkservers获取这些信息。Master此后可以保持最新，因为它控制所有chunk的放置和通过周期性心态消息监控chunkserver状态。</p>
+<p>我们最初尝试保持chunk位置信息持久化在master，但是我们发现启动时和此后周期性从chunkservers请求这些数据更加简单。这样解决了chunkservers加入和离开集群，更改名字，故障，重启等带来的master与chunkserver的同步问题。在几百个服务器组成的集群中，这些事件经常发生。</p>
+<p>这种设计的另一种理解是意识到一个chunkserver对于它有什么chunks有最终话语权。在master上维护这些信息的一致性视图毫无意义，因为chunkserver上的错误可能导致chunks突然消失（例如，一个硬盘可能故障或者失效）或者运维人员可能重命名一个chunkserver。</p>
+<h3 id="2-6-3-操作日志"><a href="#2-6-3-操作日志" class="headerlink" title="2.6.3 操作日志"></a>2.6.3 操作日志</h3><p>操作日志包含关键元数据改变的历史记录。它对于GFS至关重要（It is central to GFS）。它不仅是元数据唯一的持久记录而且还充当定义并发操作顺序的逻辑时间线。文件和chunks还有它们的版本（参见4.5节）都是被它们被创建时的逻辑时间唯一和永久标识。</p>
+<p>由于操作日志非常重要，我们必须可靠的存储它，不能让变化对客户端可见直到元数据变化被持久化。否则，我们事实上失去了整个文件系统或者最近客户端操作即使这些chunks本身存在。因此，我们在多台远端机器上复制操作日志，且只有当相关日志记录刷入（flush）到本地和远端磁盘后才会回复客户端操作。Master将多条日志记录一起批量刷入从而减少刷入和复制对整个系统吞吐量的影响。</p>
+<p>Master通过回放操作日志恢复它的文件系统状态。为了减少启动时间，我们必须保持日志小。每当日志增长到一定大小时Master设置检查点（checkpoint），这样它可以通过从磁盘加载最新检查点和回放检查点之后有限的日志记录来恢复。检查点是一种紧凑B树形式，可以直接映射到内存和被用于命名空间查找而不需要额外解析。这进一步加速了恢复和改善了可靠性。</p>
+<p>因为建立一个检查点需要一些时间，所以master以这样的方式组织它的内部状态使得新检查点被创建时不会推迟到来的突变（mutations）。Master切换到新的log文件然后单独线程创建新检查点。新检查点包含了所有切换前的突变。在一个有几百万文件的集群里它可以在一分钟内被创建。完成后它会被写入本地和远端磁盘。</p>
+<p>恢复只需要最近完成的检查点和后续日志文件。旧的检查点和日志文件可以随时删除，虽然我们会保留一些来容灾。设置检查点时的错误不影响正确性，因为恢复代码探测并且跳过不完整的检查点。</p>
+<h2 id="2-7-一致性模型"><a href="#2-7-一致性模型" class="headerlink" title="2.7 一致性模型"></a>2.7 一致性模型</h2><p>GFS的宽松一致性模型支持我们的高度分布式的应用，但实现上仍然相对简单高效。我们现在讨论GFS的保证和它们对应用程序意味着什么。我们还突出GFS如何维护这些保证但是细节放到本文的其它部分。</p>
+<h3 id="2-7-1-GFS的保证"><a href="#2-7-1-GFS的保证" class="headerlink" title="2.7.1 GFS的保证"></a>2.7.1 GFS的保证</h3><p>文件命名空间突变（比如，文件创建）是原子的。它们只被master处理：命名空间锁保证原子性和正确性（4.1节）；master的操作日志定义全局操作顺序。</p>
+<center><img src="/images/gfs-consistance.JPG" alt=""></center><br><center>表1： 突变后文件区域状态</center>
+
+<p>一次数据突变（mutation）后文件区域的状态依赖于突变的类型，无论成功或失败还是并发突变。表1总结了结果。文件区域是一致的如果所有客户端将会一直看到相同的数据，不管他们从哪个副本读取。文件数据突变后区域是定义的，如果它是一致的而且客户端将会看到突变对其整体的写入。当一次突变成功且没有被并发写干扰，受影响的区域是定义的（而且暗含一致性）：所有客户端将会看到突变写入了什么。并发成功突变使得区域未定义但是一致：所有客户端看到相同的数据，但是无法反映谁的突变被写入了。通常，它由多个突变产生的混合片段组成。一次失败的突变让区域不一致（因此也未定义）：不同的客户端可能在不同时间看到不同数据。我们下面描述我们的应用如何区分定义区域与未定义区域。应用不需要进一步的区分不同类型的未定义区域。</p>
+<p>数据突变可能是写或者记录追加。一次写导致数据被写到应用定义的文件偏移。一次记录追加导致数据（记录 the “record”）被原子地追加至少一次甚至在并发突变发生时，但是是在GFS选择的偏移（3.3节）。（相反，一次常规的追加只不过是写到客户端认为的当前文件末尾。）偏移被返回给客户端并且标记在一个定义区域的开头，这个区域包含这个记录。另外，GFS可能插入填充（padding）或者在之间有重复记录。他们占用的区域被认为是非一致的，而且通常被用户数量所限制。</p>
+<p>一系列的成功突变之后，突变文件区域被保证是定义的且包含最后一次突变写入的数据。这个的实现是通过（a）GFS通过在所有副本上按照相同顺序对chunk实施（3.1节），和(b)采用chunk版本号来探测任何因为chunk server宕机（4.5节）造成副本变质（stale）。变质副本永远不会参与突变或者提供位置信息给向master查询的客户端。它们是最早被回收的垃圾。</p>
+<p>因为客户端缓存chunk位置，它们可能会在该信息刷新之前从一个变质的副本读取数据。这个窗口被缓存条目的超时和下次打开该文件所限制，下次打开该文件会从cache为该文件清除所有的chunk信息。此外，因为绝大部分文件是只能追加的，一个变异副本通常会返回一个过早的chunk结尾而不是过期的数据。当一个读客户端重试和联系master，它将会立即拿到当前chunk的位置。</p>
+<p>一次成功突变很久之后，组件失效依然可以腐化或者摧毁数据。GFS通过定期master与所有chunkservers握手来标识失效的chunkservers和通过校验和（checksumming 5.2节）来探测数据腐化（data corruption）。一旦问题发生，数据被尽快从有效的副本中恢复（4.3节）。一个chunk只有在它所有的副本在GFS反应，通常在几分钟内，之前都丢失才会不可逆的丢失。甚至在这种情况下，它变得不可达，但是没有腐化：应用接收到明确的错误而不是腐化的数据。</p>
+<h3 id="2-7-2-对应用的影响"><a href="#2-7-2-对应用的影响" class="headerlink" title="2.7.2 对应用的影响"></a>2.7.2 对应用的影响</h3><p>GFS应用可以配合一些技术适应宽松一致性模型，这些技术也被其它目的所需要：依靠追加而不是覆盖，检查点，以及编写自我验证，自我识别记录。</p>
+<p>实际上，所有我们的应用通过追加而不是覆盖对文件进行修改。一个典型应用就是，一次写（writer）从头到尾生成一个文件。它在写完所有数据之后自动重命名这个文件成一个永久名字，或者周期性地标记（checkpoints）多少已经成功写入。检查点可能也会包含应用层校验和。读操作（readers）判定和处理只到检查点最后的文件区域，这些区域是已知处于定义状态。不考虑一致性和并发问题，这种方法效果很好（served us well）。追加远比随机写高效和灵活应对应用失效。检查点允许写操作（writers）增量重启（restart incrementally）和避免读操作（readers）处理成功写入但是从应用角度看仍然不完整的数据。</p>
+<p>在其它典型应用中，许多写操作（writers）为一个归并结果并发追加一个文件或者作为一个生产消费者队列。记录追加至少追加一次（append-at-least-once）语义保留了每个写操作的输出。读操作处理偶尔填充和重复按照如下方式（as follows）。每条写操作（writer）准备的记录包含校验和等额外信息，这样它的有效性可以被验证。一个读操作（reader）可以通过校验和识别并丢弃额外的填充和记录碎片。如果它无法容忍偶尔的重复（例如，如果它们触发非幂等运算），它可以用记录中的唯一标识过滤它们，唯一标识符经常也会被用来命名相应的应用实体例如网页文档。这些为记录读写的功能（除了删除重复数据）在库代码里，被我们的应用程序共享，也可以被用于Google其它文件接口的实现。这样相同顺序记录，加上少量重复，总是被交付给记录读操作（reader）。</p>
+<h1 id="3-系统交互"><a href="#3-系统交互" class="headerlink" title="3. 系统交互"></a>3. 系统交互</h1><p>我们设计的这个系统最小化了master在所有操作中的参与。在这个背景下，我们现在描述客户端，master和chunkservers如何交互来实现数据突变，原子记录追加，和快照。</p>
+<h2 id="3-1-租约和突变顺序"><a href="#3-1-租约和突变顺序" class="headerlink" title="3.1 租约和突变顺序"></a>3.1 租约和突变顺序</h2><p>突变（mutation）是一次操作改变chunk的内如或者metadata，例如写或者追加操作。每次突变在所有chunk的副本上执行。我们用租约来维护副本上一致的突变顺序。Master授予给其中一个副本授予chunk租约，我们称之为首要（primary）。首要副本对每个chunk上所有突变采取连续顺序。所有副本在实施突变时采用这个顺序。因此，全局突变顺序由master选择的租约授予顺序和一次租约内首要副本（primary）指定的序列号定来定义。</p>
+<p>租约机制是被设计用来减少master管理的开销。一次租约有初始化的60s超时。然而随着这个chunk持续被突变，首要副本可以请求并且通常不定期收到延长。这些延长请求和授予（消息)通过心跳包携带定期在master和所有chunkservers上交互。Master可能有时尝试在超时前撤销租约（例如，master想制止正在被重命名文件的突变）。甚至如果master失去了与首要的联系，它可以在老的租约过期后安全地授予一个新的租约给另一个副本。</p>
+<center><img src="/images/gfs-write.JPG" alt=""></center><br><center>图2 写入控制与数据流</center>
+
+<p>在图2中，我们通过跟随一次写的控制流的步骤解释这个过程。</p>
+<ol>
+<li>客户端向master询问哪个chunkserver握有这个chunk的租约和其它副本的位置。如果没有任何chunk有租约，master选择其中一个副本授予（未显示）。</li>
+<li>Master回复首要副本的标识（identity）和其它副本的位置。客户端缓存这个数据用于未来的突变（mutations）。它只有当首要副本变得不可达或者回复说不再握有租约才需要再次联系master。</li>
+<li>客户端把数据推到（push）所有的副本。这个操作客户端可以任意顺序。每个chunkserver会将数据存储在内部的LRU缓冲缓存直到数据被使用或者老化。通过数据流与控制流解耦，我们可以通过基于网络拓扑调度繁重的数据流而不管哪个chunkserver是首要的来改善性能。3.2节会进一步讨论这些。</li>
+<li>一旦所有的副本确认收到数据，客户端发送写请求给primary。这个请求标识（identifies）了之前推送到所有副本的数据。Primary给所有收到的突变赋予连贯有序的序号，提供了必要的序列化。它序号应用突变到本地状态。</li>
+<li>Primary转发了写请求给所有的二级副本（secondary replicas）。</li>
+</ol>
+<ol>
+<li>The primary forwards the write request to all secondary<br>replicas. Each secondary replica applies mutations<br>in the same serial number order assigned by<br>the primary.</li>
+<li>The secondaries all reply to the primary indicating<br>that they have completed the operation.</li>
+<li>The primary replies to the client. Any errors encountered<br>at any of the replicas are reported to the client.<br>In case of errors, the write may have succeeded at the<br>primary and an arbitrary subset of the secondary replicas.<br>(If it had failed at the primary, it would not<br>have been assigned a serial number and forwarded.)<br>The client request is considered to have failed, and the<br>modified region is left in an inconsistent state. Our<br>client code handles such errors by retrying the failed<br>mutation. It will make a few attempts at steps (3)<br>through (7) before falling backt o a retry from the beginning<br>of the write.</li>
+</ol>
 
       
 
@@ -371,7 +405,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">1.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Assumptions"><span class="toc-number">2.</span> <span class="toc-text">Assumptions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interface"><span class="toc-number">3.</span> <span class="toc-text">Interface</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Architecture"><span class="toc-number">4.</span> <span class="toc-text">Architecture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chunk-Size"><span class="toc-number">5.</span> <span class="toc-text">Chunk Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Single-Master"><span class="toc-number">6.</span> <span class="toc-text">Single Master</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Metadata"><span class="toc-number">7.</span> <span class="toc-text">Metadata</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#In-Memory-Data-Structures"><span class="toc-number">7.1.</span> <span class="toc-text">In-Memory Data Structures</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#类别和主题描述"><span class="toc-number">2.</span> <span class="toc-text">类别和主题描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通用术语"><span class="toc-number">3.</span> <span class="toc-text">通用术语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#关键词"><span class="toc-number">4.</span> <span class="toc-text">关键词</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-介绍"><span class="toc-number">5.</span> <span class="toc-text">1. 介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-设计概览"><span class="toc-number">6.</span> <span class="toc-text">2. 设计概览</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-假设"><span class="toc-number">6.1.</span> <span class="toc-text">2.1 假设</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-接口"><span class="toc-number">6.2.</span> <span class="toc-text">2.2 接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-架构"><span class="toc-number">6.3.</span> <span class="toc-text">2.3 架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-单Master"><span class="toc-number">6.4.</span> <span class="toc-text">2.4 单Master</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-Chunk-Size"><span class="toc-number">6.5.</span> <span class="toc-text">2.5 Chunk Size</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-元数据"><span class="toc-number">6.6.</span> <span class="toc-text">2.6 元数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-1-内存数据结构（In-Memory-Data-Structure）"><span class="toc-number">6.6.1.</span> <span class="toc-text">2.6.1 内存数据结构（In-Memory Data Structure）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-2-Chunk位置"><span class="toc-number">6.6.2.</span> <span class="toc-text">2.6.2 Chunk位置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-6-3-操作日志"><span class="toc-number">6.6.3.</span> <span class="toc-text">2.6.3 操作日志</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-一致性模型"><span class="toc-number">6.7.</span> <span class="toc-text">2.7 一致性模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-1-GFS的保证"><span class="toc-number">6.7.1.</span> <span class="toc-text">2.7.1 GFS的保证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-7-2-对应用的影响"><span class="toc-number">6.7.2.</span> <span class="toc-text">2.7.2 对应用的影响</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-系统交互"><span class="toc-number">7.</span> <span class="toc-text">3. 系统交互</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-租约和突变顺序"><span class="toc-number">7.1.</span> <span class="toc-text">3.1 租约和突变顺序</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
@@ -504,15 +538,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">multithreading</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">

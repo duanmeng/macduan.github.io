@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-15T10:04:45.837Z">
+<meta property="og:updated_time" content="2018-06-24T06:57:04.876Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="YouCompleteMe配置与我的vimrc备份">
 <meta name="twitter:description" content="作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。">
@@ -167,10 +167,13 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。 <a id="more"></a></p>
-<p>我用vundle安装和管理插件，YCM的官方安装文档也是推荐vundle，但是我配置好vimrc之后用执行vundle的PlugInstall时发现速度巨慢，其实这个过程本质就是在.vim/bundle中执行<em>git clone <a href="https://github.com/Valloric/YouCompleteMe.git" target="_blank" rel="external">https://github.com/Valloric/YouCompleteMe.git</a></em>，之后可以在YouCompleteMe目录中执行<em>git submodule update –init –recursive</em>。 后面的安装步骤非常简单，</p>
-<blockquote>
-<p>cd ~/.vim/bundle/YouCompleteMe<br>./install.py –clang-completer</p>
-</blockquote>
+<p>我用vundle安装和管理插件，YCM的官方安装文档也是推荐vundle，但是我配置好vimrc之后用执行vundle的PlugInstall时发现速度巨慢，其实这个过程本质就是在.vim/bundle中执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/Valloric/YouCompleteMe.git</div></pre></td></tr></table></figure>
+<p>之后可以在YouCompleteMe目录中执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git submodule update --init --recursive</div></pre></td></tr></table></figure>
+<p>后面的安装步骤非常简单，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install build-essential cmake <span class="comment">#Install development tools and CMake</span></div><div class="line">sudo apt-get install python-dev python3-dev <span class="comment">#Make sure you have Python headers installed</span></div><div class="line">cd ~/.vim/bundle/YouCompleteMe</div><div class="line">./install.py --clang-completer <span class="comment">#Compiling YCM with semantic support for C-family languages</span></div></pre></td></tr></table></figure>
+<p>如果很懒在确认安装build-essential，cmake和python-dev之后，执行下面脚本：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span>!/bin/bash</div><div class="line"></div><div class="line">log() &#123;</div><div class="line">    echo "$(date +'%Y-%m-%dT%H:%M:%S%z') INFO $0 | $@"</div><div class="line">&#125;</div><div class="line"></div><div class="line">err() &#123;</div><div class="line">    echo "$(date +'%Y-%m-%dT%H:%M:%S%z') ERROR $0 | $@" &gt;&amp;2</div><div class="line">&#125;</div><div class="line"></div><div class="line">execute() &#123;</div><div class="line">    if (! $@); then</div><div class="line">        err "Failt to $@"</div><div class="line">        exit 1</div><div class="line">    fi</div><div class="line">&#125;</div><div class="line"></div><div class="line">log "Start to install YouCompleteMe"</div><div class="line"></div><div class="line">execute 'cd ~/.vim/bundle/'</div><div class="line">execute 'rm -rf YouCompleteMe'</div><div class="line">execute 'git clone https://github.com/Valloric/YouCompleteMe.git'</div><div class="line">execute 'cd YouCompleteMe'</div><div class="line">execute 'git submodule update --init --recursive'</div><div class="line">execute './install.py --clang-completer'</div><div class="line"></div><div class="line">log "Success to install YouCompleteMe"</div><div class="line"></div><div class="line">exit 0</div></pre></td></tr></table></figure></p>
 <p>我的环境是ubuntu-64bit，详细参考<a href="https://github.com/Valloric/YouCompleteMe#ubuntu-linux-x64" target="_blank" rel="external">官方文档</a>。<br>需要注意的是YCM会默认往上级目录查找直到HOME目录去查找一个.ycm_extra_conf.py的文件（可以自己配置），在.vimrc中我指定了使用官方默认的，配置如下，</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> <span class="variable">g:ycm_global_ycm_extra_conf</span>=<span class="string">'/home/macduan/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'</span></div></pre></td></tr></table></figure>
 <p>在具体的项目中，在项目的根目录中放一个.ycm_extra_conf.py，并且加上头文件目录的配置，比如，<br><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">flags = [</div><div class="line"><span class="string">'-Wall'</span>,</div><div class="line"><span class="string">'-Wextra'</span>,</div><div class="line"><span class="string">'-Werror'</span>,</div><div class="line"><span class="string">'-Wno-long-long'</span>,</div><div class="line"><span class="string">'-Wno-variadic-macros'</span>,</div><div class="line"><span class="string">'-fexceptions'</span>,</div><div class="line"><span class="string">'-DNDEBUG'</span>,</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/brpc'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/bthread'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/butil'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/bvar'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/json2pb'</span>,</div><div class="line"><span class="string">'-I'</span>,</div><div class="line"><span class="string">'/home/macduan/work/opensource/brpc/src/mcpack2pb'</span>]</div></pre></td></tr></table></figure></p>
@@ -441,15 +444,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">multithreading</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
