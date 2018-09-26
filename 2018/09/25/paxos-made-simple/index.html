@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>Tag: Java | Macduan&#39;s Notes</title>
+  <title>[译]Paxos Made Simple | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Stay Simple Stay Naive">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Macduan&#39;s Notes">
-<meta property="og:url" content="http://duanmeng.github.io/tags/Java/index.html">
+  <meta name="description" content="“只有一种一致性协议，那就是Paxos” – Mike Burrows Google Chubby 作者">
+<meta name="keywords" content="distributed">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Paxos Made Simple">
+<meta property="og:url" content="http://duanmeng.github.io/2018/09/25/paxos-made-simple/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Stay Simple Stay Naive">
+<meta property="og:description" content="“只有一种一致性协议，那就是Paxos” – Mike Burrows Google Chubby 作者">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-26T14:52:52.872Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Macduan&#39;s Notes">
-<meta name="twitter:description" content="Stay Simple Stay Naive">
+<meta name="twitter:title" content="[译]Paxos Made Simple">
+<meta name="twitter:description" content="“只有一种一致性协议，那就是Paxos” – Mike Burrows Google Chubby 作者">
   
   
     <link rel="icon" href="[object Object]">
@@ -145,68 +147,217 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-paxos-made-simple" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/11/04/LeetCode with C++ and Java and little scala/" class="archive-article-date">
-  	<time datetime="2017-11-04T04:43:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-04</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/11/04/LeetCode with C++ and Java and little scala/">LeetCode using C++ and Java (keep updating ...)</a>
+    <h1 class="article-title" itemprop="name">
+      [译]Paxos Made Simple
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/09/25/paxos-made-simple/" class="archive-article-date">
+  	<time datetime="2018-09-25T13:32:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-25</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>“只有一种一致性协议，那就是Paxos” – <a href="https://perspectives.mvdirona.com/2008/05/mike-burrows-early-days-at-dec-through-microsoft-to-google/" target="_blank" rel="external">Mike Burrows</a> Google Chubby 作者  <a id="more"></a></p>
+<h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>Paxos算法，当用简单英文介绍时就非常简单了。 (The Paxos algorithm, when presented in plain English, is very simple.)</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>用于实现容错分布式系统的Paxos算法被认为难以理解，可能是因为最初表述对于许多读者来说是希腊语[5]。实际上，它是最简单和最明显的分布式算法之一。 其核心是一致性算法，即[5]中的“synod”算法。下一节表明，这种一致性算法几乎不可避免地遵循我们希望它满足的性质。最后一节解释了完整的Paxos算法，该算法是通过直接应用一致性到状态机方法获得的，状态机方法是一种应该被广泛知晓的构建分布式系统的方法，是因为它是大概被引用次数最多的分布式系统理论论文的主题[4]。</p>
+<h1 id="一致性算法"><a href="#一致性算法" class="headerlink" title="一致性算法"></a>一致性算法</h1><h2 id="2-1-问题提议"><a href="#2-1-问题提议" class="headerlink" title="2.1 问题提议"></a>2.1 问题提议</h2><p>假设有一批可以提出值的进程。 一致性算法确保提议的值中只有一个被选中。 如果没有提出任何值，则不应选择任何值。 如果已选择值，则进程应该能够获悉（learn）所选值。 达成一致的安全要求是：</p>
+<ul>
+<li>只能选择已提出的值，</li>
+<li>只选择一个值，并且</li>
+<li>一个进程永远不会获悉一个被选中的值，除非它真的选中。</li>
+</ul>
+<p>我们不会尝试指定精确的活跃的需求。 但是，目标是确保某个提议的值最终被选中，如果一个值被选中，那么进程可以最终获悉该值。</p>
+<p>我们让共识算法中的三个角色由三类代理（agent）执行：提议者（proposers），接受者（acceptors）和学习者（learners）。在实现中，单个进程可以充当多个代理，但是代理到进程的映射在此我们不关心。</p>
+<p>假设代理可以通过发送消息来相互通信。 我们使用通常的异步非拜占庭模型，其中：</p>
+<ul>
+<li>代理以任意速度运行，可能因停止而故障，并可能重新启动。由于所有代理在选择值后可能故障然后重新启动，因此除非某些信息可以由失败并重新启动的代理记住，否则没有解决方案。</li>
+<li>消息可以任意长时间传递，可以被复制，并且可以被丢失，但它们不会被破坏。</li>
+</ul>
+<h2 id="2-2-选择一个值"><a href="#2-2-选择一个值" class="headerlink" title="2.2 选择一个值"></a>2.2 选择一个值</h2><p>选择值的最简单方法是使用单个接受者代理。提议者向接受者发送提议，接受者选择其收到的第一个提议值。这种解决方案虽然简单，但不可行，因为接受者故障会使整个过程无法进行。</p>
+<p>那么，让我们尝试另一种选择值的方法。我们使用多个接受者代理而不是单个接受者。提议者将建议值发送给一组接受者。接受者可以接受提议值。当足够大的接受者集合接受它时，选择该值。有多大才足够呢？为了确保只选择一个值，我们可以让任意大多数代理组成一个足够大的集合。因为任何两个多数代理至少有一个共同的接受者，如果接受者最多可以接受一个值，这是有效的。 （明显从[3]开始，有大量的论文概述了这个大多数的观察。）</p>
+<p>在没有失败或消息丢失的情况下，即使只有单个提议者仅提出一个值，我们也希望这个值被选择。这表明要求：</p>
+<p><strong>P1. 接受者必须接受其收到的第一个提议。</strong></p>
+<p>但是这个要求引出了一个问题。不同的提议者几乎同时提出几个值，导致每个接受者都接受了一个值，但是没有一个值被它们中的大多数接受。即使只有两个建议的值，如果每个值都被大约一半的接受者接受了，单个接受者的失败可能造成无法知道选择了哪个值。</p>
+<p>P1和一个值仅在大多数接受者接受时才会被选择的要求意味着必须允许接受者接受多个提议。我们通过为每个提议分配（自然）编号来跟踪接受者可能接受的不同提议，因此提议包含提议编号和值。为防止混淆，我们要求不同的提议具有不同的数字。我们现在只是这样假设，不考虑具体实现。当具有某个值的单个提议已被大多数接受者接受时，将选择这个值。在这种情况下，我们可以说已经选择了该提议（及其值）。</p>
+<p>我们可以允许选择多个提议，但我们必须保证所有选定的提议具有相同的价值。通过对提议编号的归纳，足以保证：</p>
+<p><strong>P2. 如果选择了值为v的提议，则选择的每个编号较高的提议都具有值v。</strong></p>
+<p>由于数字是完全有序的，因此条件P2保证了仅选择单个值的关键安全属性。要被选中，至少有一个接受者必须接受提议。 所以,我们通过满足以下条件来满足P2：</p>
+<p><strong>P2<sup>a</sup>. 如果选择了值为v的提议，则选择每个编号较高的被任何接受者接受的提议者都有值v。</strong>（<em>译者注：这里很关键且难理解，因为不同提议者的值可能不一样，但是为了达成一致，哪怕提议号高的提议发现有接受者接受了提议号低的不同值也会把自己的提议值改成一样的。</em>）</p>
+<p>我们仍然维护P1以确保选择一些提议被选择。由于通信是异步的，提议可能被一个从未收到过任何提议的接受者c选择。假设一个新的提议者“醒来”并发出一个具有不同值的更高编号的提议。 P1要求c接受此提议，违反P2<sup>a</sup>。 维持P1和P2<sup>a</sup>需要加强P2<sup>a</sup>：</p>
+<p><strong>P2<sup>b</sup>. 如果一个值为v的提议被选择了，则由任意提议者提出的每个编号较高的提议的值为v。</strong></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>如果您看完感觉亦可赛艇，可以请我喝咖啡<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/alipay_rcv.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/wechat_rcv.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LeetCode</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/2018/09/25/paxos-made-simple/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2018/02/14/ycm-vim-cfg/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">YouCompleteMe配置与我的vimrc备份</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">2.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一致性算法"><span class="toc-number">3.</span> <span class="toc-text">一致性算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-问题提议"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 问题提议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-选择一个值"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 选择一个值</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -229,9 +380,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
