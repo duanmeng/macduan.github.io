@@ -6,18 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>Tag: multithreading | Macduan&#39;s Notes</title>
+  <title>Flink Notes | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Stay Simple Stay Naive">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Macduan&#39;s Notes">
-<meta property="og:url" content="http://duanmeng.github.io/tags/multithreading/index.html">
+  <meta name="description" content="Flink是一种框架和分布式处理引擎，用于对无界和有界数据进行有状态计算。Flink被设计成可以在所有常见的集群环境中运行，以任意规模执行in-memory计算。">
+<meta name="keywords" content="distributed,flink">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink Notes">
+<meta property="og:url" content="http://duanmeng.github.io/2018/11/10/Flink-Notes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Stay Simple Stay Naive">
+<meta property="og:description" content="Flink是一种框架和分布式处理引擎，用于对无界和有界数据进行有状态计算。Flink被设计成可以在所有常见的集群环境中运行，以任意规模执行in-memory计算。">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-10T11:21:01.682Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Macduan&#39;s Notes">
-<meta name="twitter:description" content="Stay Simple Stay Naive">
+<meta name="twitter:title" content="Flink Notes">
+<meta name="twitter:description" content="Flink是一种框架和分布式处理引擎，用于对无界和有界数据进行有状态计算。Flink被设计成可以在所有常见的集群环境中运行，以任意规模执行in-memory计算。">
   
   
     <link rel="icon" href="[object Object]">
@@ -145,64 +147,213 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Flink-Notes" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/12/24/epoll-notes/" class="archive-article-date">
-  	<time datetime="2017-12-24T06:17:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-24</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/12/24/epoll-notes/">Epoll的一些事情</a>
+    <h1 class="article-title" itemprop="name">
+      Flink Notes
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/11/10/Flink-Notes/" class="archive-article-date">
+  	<time datetime="2018-11-10T10:01:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-10</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Flink是一种框架和分布式处理引擎，用于对无界和有界数据进行有状态计算。Flink被设计成可以在所有常见的集群环境中运行，以任意规模执行in-memory计算。</p>
+<a id="more"></a> 
+<h1 id="Flink搭建"><a href="#Flink搭建" class="headerlink" title="Flink搭建"></a>Flink搭建</h1><p>在Flink官方文档中的Quickstart中给了在Flink上运行经典的WordCount，通过动手搭建和运行来初步了Flink；在此基础上，我实验了源码编译和IDE运行。</p>
+<h2 id="Binary安装与运行"><a href="#Binary安装与运行" class="headerlink" title="Binary安装与运行"></a>Binary安装与运行</h2><ol>
+<li>从官网上下载flink-1.6.2-bin-hadoop28-scala_2.11.tgz并解压到目标目录，</li>
+<li>运行$YourFlinkFolder/bin/start-cluster.sh，这时可以在<a href="http://localhost:8081访问所启动的flink" target="_blank" rel="external">http://localhost:8081访问所启动的flink</a> cluster的dashboard，<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.6/quickstart/setup_quickstart.html" target="_blank" rel="external">详细请见官方文档</a>，log在$YourFlinkFolder/log/flink-<em>-standalonesession-</em>.log，</li>
+<li>运行nc -l 9000，这个很关键，在运行WordCount Job的时候需要指定接收text的服务的hostname（默认localhost）和port，如果没有启动，运行时会连接异常，</li>
+<li>$YourFlinkFolder/bin/flink run examples/streaming/SocketWindowWordCount.jar –port 9000</li>
+<li>在启动nc的terminal上输入句子，$YourFlinkFolder/log/flink-<em>-taskexecutor-</em>.out会输出word，count。</li>
+</ol>
+<h2 id="IDE运行"><a href="#IDE运行" class="headerlink" title="IDE运行"></a>IDE运行</h2><p>虽然上一节描述了如何运行一个WordCount，但是如果想要了解其内部机制最好是在IDE中调试一番，IDE理所当然的选Intellij IDEA啦：</p>
+<ol>
+<li>git clone <a href="https://github.com/apache/flink.git，" target="_blank" rel="external">https://github.com/apache/flink.git，</a></li>
+<li>mvn clean package -DskipTests，</li>
+<li>在Intellij中打开flink目录，打开过程中（最好auto import），Intellij会自动找到pom通过mvn构建project，</li>
+<li>为了要先执行步骤2呢，因为我在执行步骤3的时候会报找不到avro的错误</li>
+<li>运行nc -l 9000</li>
+<li>右击<a href="https://github.com/apache/flink/blob/master/flink-examples/flink-examples-streaming/src/main/java/org/apache/flink/streaming/examples/socket/SocketWindowWordCount.java" target="_blank" rel="external">SocketWindowWordCount</a>类</li>
+<li>在启动nc的erminal上输入句子，Intellij的输出窗口上可以看到word，count。</li>
+</ol>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>如果您看完感觉亦可赛艇，可以请我喝咖啡<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/alipay_rcv.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/wechat_rcv.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">multithreading</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flink</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/2018/11/10/Flink-Notes/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2018/09/25/paxos-made-simple/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[译]Paxos Made Simple</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Flink搭建"><span class="toc-number">1.</span> <span class="toc-text">Flink搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Binary安装与运行"><span class="toc-number">1.1.</span> <span class="toc-text">Binary安装与运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDE运行"><span class="toc-number">1.2.</span> <span class="toc-text">IDE运行</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -225,9 +376,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Macduan&#39;s Notes">
 <meta property="og:description" content="“只有一种一致性协议，那就是Paxos” – Mike Burrows Google Chubby 作者">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-07T07:42:57.392Z">
+<meta property="og:updated_time" content="2018-10-13T09:16:14.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[译]Paxos Made Simple">
 <meta name="twitter:description" content="“只有一种一致性协议，那就是Paxos” – Mike Burrows Google Chubby 作者">
@@ -199,8 +199,16 @@
 <p>为了发现如何满足P2<sup>b</sup>，让我们考虑如何证明它是成立的。 我们假设选择了一些序号为m和值为v的提案，并表明任何以序号$n&gt; m$发出的提案也具有值v。我们可以通过在n上使用归纳法来使证明更容易，因此我们可以证明提议序号为n具有v值的额外假设是每个以$m :: (n - 1)$中的数字为序号发布的提议具有值v，其中$i :: j$表示从i到j的数字集。对于即将被选择序号为m的提议，必须有一些由大多数接受者组成的集合C，C中的每个接受者都接受它。 将此与归纳假设相结合，m被选择的假设意味着：</p>
 <p><em>C中的每个接受者都接受了一个序号在$m :: (n - 1)$的提案，并且任何接受者接受的序号在$m :: (n - 1)$的提案都具有值v。</em></p>
 <p>由于任何大多数接受者组成的集合S至少包含一个C成员，我们可以通过确保以下<a href="https://en.wikipedia.org/wiki/Invariant_(mathematics" target="_blank" rel="external">不变式(invariant)</a>)推导出序号为n的提议具有值v：</p>
-<p><strong>P2<sup>c</sup>. 对于任何v和n，如果具有值v和序号n的提议被发布（issued），则存在由大多数接受者组成的集合S，使得（a）S中的接受者没有接受任何序号小于n的提议，或者 （b）v是S中所有被接受者接受的，序号小于n的提议中序号最高的提议的值。</strong></p>
+<p><strong>P2<sup>c</sup>. 对于任何v和n，如果具有值v和序号n的提议被发布（issued），则存在由大多数接受者组成的集合S，使得（a）S中的接受者没有接受任何序号小于n的提议，或者 （b）v是S中所有被接受者接受的，序号小于n的提议中，序号最高的提议的值。</strong></p>
 <p>因此我们可以通过维护P2<sup>c</sup>的不变式来满足P2<sup>b</sup>。</p>
+<p>为了保持P2<sup>c</sup>的不变性，提议者想要发布序号为n的提议必须获悉序号小于n的提议中，序号最高的提议，如果有已经或将被某些大多数接受者中的每个接受者接受的提议。了解已经被接受的提议很容易;预测将被接受的提议很难。提议者不是试图预测未来，而是通过提取不存在任何此类接受的承诺来控制它。换句话说，提议者要求接受者不再接受任何编号小于n的提议。 这导致以下用于发布提议的算法。</p>
+<ol>
+<li>提议者选择一个序号为n的新提议，并向某些接受者组的每个成员发送请求，要求其回复：<br>（a）承诺永远不再接受编号小于n的提案，并且<br>（b）如果有的话，序号小于n的提议中，序号最高的已经被接受。 </li>
+</ol>
+<p>我将这样的请求称为序号为n的预备请求（prepare request）。</p>
+<ol>
+<li>如果提议者收到大多数接受者的请求回复，则它可以发布一个序号为n且值为v的提议，其中v是回复中序号最高的提议值，或者是提议者任意选择的值，如果响应者没有报告任何提议。</li>
+</ol>
 
       
 
@@ -314,6 +322,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2018/11/10/Flink-Notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Flink Notes
+        
+      </div>
+    </a>
   
   
     <a href="/2018/02/14/ycm-vim-cfg/" id="article-nav-older" class="article-nav-link-wrap">
@@ -473,11 +490,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
+                <a href="javascript:void(0)" class="js-tag color1">flink</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+                <a href="javascript:void(0)" class="js-tag color3">leveldb</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -486,10 +503,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -502,6 +515,14 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
