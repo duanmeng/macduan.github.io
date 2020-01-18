@@ -8,19 +8,20 @@
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
   <title>简明Kubernetes教程 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
+  <meta name="description" content="前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action">
+<meta name="keywords" content="Kubernetes,Cloud">
 <meta property="og:type" content="article">
 <meta property="og:title" content="简明Kubernetes教程">
 <meta property="og:url" content="http://duanmeng.github.io/2020/01/18/byte-of-kubernetes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
+<meta property="og:description" content="前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://km.oa.com/files/photos/pictures/201909/1568896343_87_w718_h296.png">
 <meta property="og:image" content="http://km.oa.com/files/photos/pictures/201909/1568896356_68_w638_h404.png">
-<meta property="og:updated_time" content="2020-01-18T06:56:44.436Z">
+<meta property="og:updated_time" content="2020-01-18T07:20:16.442Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简明Kubernetes教程">
-<meta name="twitter:description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
+<meta name="twitter:description" content="前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action">
 <meta name="twitter:image" content="http://km.oa.com/files/photos/pictures/201909/1568896343_87_w718_h296.png">
   
   
@@ -169,8 +170,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>[TOC]</p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了<a href="https://kubernetes.io/docs/home/" target="_blank" rel="external">https://kubernetes.io/docs/home/</a> 和 <a href="https://item.jd.com/12510666.html" target="_blank" rel="external">Kubernetes In Action</a>。</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了<a href="https://kubernetes.io/docs/home/" target="_blank" rel="external">https://kubernetes.io/docs/home/</a> 和 <a href="https://item.jd.com/12510666.html" target="_blank" rel="external">Kubernetes In Action</a><a id="more"></a>。</p>
 <h2 id="Kubernetes简介"><a href="#Kubernetes简介" class="headerlink" title="Kubernetes简介"></a>Kubernetes简介</h2><h3 id="kubernetes是什么"><a href="#kubernetes是什么" class="headerlink" title="kubernetes是什么"></a>kubernetes是什么</h3><p>kubernetes源自google内部的<a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/43438.pdf" target="_blank" rel="external">Borg</a>和<a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/41684.pdf" target="_blank" rel="external">Omega</a>的开源软件系统，允许在它上面部署和管理容器的应用。它将底层基础设施抽象，使得在大规模的服务器（VM或BM）节点上运行软件就像在单个节点上运行一样，简化了开发，部署和运维。</p>
 <h3 id="kubernetes提供了什么"><a href="#kubernetes提供了什么" class="headerlink" title="kubernetes提供了什么"></a>kubernetes提供了什么</h3><ul>
 <li>服务发现与负载均衡</li>
@@ -389,6 +389,21 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Kubernetes</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Cloud</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -452,6 +467,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2020/01/18/borg-omega-kubernetes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          【译】Borg, Omega and Kubernetes
+        
+      </div>
+    </a>
   
   
     <a href="/2018/11/10/Flink-Notes/" id="article-nav-older" class="article-nav-link-wrap">
@@ -619,23 +643,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Kubernetes</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Cloud</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">multithreading</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">linux</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">google</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">vi</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -648,6 +668,18 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">AI</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">google</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">hexo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">vi</a>
               </li>
              
               <li class="article-tag-list-item">
