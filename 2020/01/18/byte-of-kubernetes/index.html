@@ -6,18 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://duanmeng.github.io">
-  <title>Macduan&#39;s Notes</title>
+  <title>简明Kubernetes教程 | Macduan&#39;s Notes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Stay Simple Stay Naive">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Macduan&#39;s Notes">
-<meta property="og:url" content="http://duanmeng.github.io/index.html">
+  <meta name="description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简明Kubernetes教程">
+<meta property="og:url" content="http://duanmeng.github.io/2020/01/18/byte-of-kubernetes/index.html">
 <meta property="og:site_name" content="Macduan&#39;s Notes">
-<meta property="og:description" content="Stay Simple Stay Naive">
+<meta property="og:description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://km.oa.com/files/photos/pictures/201909/1568896343_87_w718_h296.png">
+<meta property="og:image" content="http://km.oa.com/files/photos/pictures/201909/1568896356_68_w638_h404.png">
+<meta property="og:updated_time" content="2020-01-18T06:56:44.436Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Macduan&#39;s Notes">
-<meta name="twitter:description" content="Stay Simple Stay Naive">
+<meta name="twitter:title" content="简明Kubernetes教程">
+<meta name="twitter:description" content="[TOC] 前言该文档假定大家有一定的Docker基础，介绍了kubernetes的常用和重要的功能的简单使用方法，目的是为了让大家看完可以快速上手kubernetes，并且在遇到问题时或者想深入了解某方面的时候知道如何Google；该文档主要参考了https://kubernetes.io/docs/home/ 和 Kubernetes In Action。 Kubernetes简介kubern">
+<meta name="twitter:image" content="http://km.oa.com/files/photos/pictures/201909/1568896343_87_w718_h296.png">
   
   
     <link rel="icon" href="[object Object]">
@@ -145,16 +149,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-byte-of-kubernetes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-byte-of-kubernetes" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/18/byte-of-kubernetes/">简明Kubernetes教程</a>
+    <h1 class="article-title" itemprop="name">
+      简明Kubernetes教程
     </h1>
   
 
@@ -352,6 +354,37 @@
       
 
       
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>如果您看完感觉亦可赛艇，可以请我喝咖啡<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/alipay_rcv.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/images/wechat_rcv.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
     </div>
     <div class="article-info article-info-index">
       
@@ -359,16 +392,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/01/18/byte-of-kubernetes/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://duanmeng.github.io/2020/01/18/byte-of-kubernetes/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/10/Flink-Notes/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Flink Notes</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -383,1049 +475,32 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Flink-Notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/10/Flink-Notes/">Flink Notes</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/10/Flink-Notes/" class="archive-article-date">
-  	<time datetime="2018-11-10T10:01:58.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Flink是一种框架和分布式处理引擎，用于对无界和有界数据进行有状态计算。Flink被设计成可以在所有常见的集群环境中运行，以任意规模执行in-memory计算。</p>
-        
-          <a class="article-more-a" href="/2018/11/10/Flink-Notes/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">flink</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/10/Flink-Notes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kubernetes简介"><span class="toc-number">2.</span> <span class="toc-text">Kubernetes简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes是什么"><span class="toc-number">2.1.</span> <span class="toc-text">kubernetes是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes提供了什么"><span class="toc-number">2.2.</span> <span class="toc-text">kubernetes提供了什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes不提供什么"><span class="toc-number">2.3.</span> <span class="toc-text">kubernetes不提供什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes对象"><span class="toc-number">2.4.</span> <span class="toc-text">kubernetes对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#基础对象"><span class="toc-number">2.4.1.</span> <span class="toc-text">基础对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#高级对象（控制器）"><span class="toc-number">2.4.2.</span> <span class="toc-text">高级对象（控制器）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#架构与流程"><span class="toc-number">2.5.</span> <span class="toc-text">架构与流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作指南"><span class="toc-number">3.</span> <span class="toc-text">操作指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod"><span class="toc-number">3.1.</span> <span class="toc-text">Pod</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-restartPolicy"><span class="toc-number">3.1.1.</span> <span class="toc-text">Container restartPolicy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-Probes"><span class="toc-number">3.1.2.</span> <span class="toc-text">Container Probes</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ReplicaSet"><span class="toc-number">3.2.</span> <span class="toc-text">ReplicaSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DaemonSet"><span class="toc-number">3.3.</span> <span class="toc-text">DaemonSet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deployment"><span class="toc-number">3.4.</span> <span class="toc-text">Deployment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Service"><span class="toc-number">3.5.</span> <span class="toc-text">Service</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#服务暴露给集群内部客户端"><span class="toc-number">3.5.1.</span> <span class="toc-text">服务暴露给集群内部客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#服务发现"><span class="toc-number">3.5.1.1.</span> <span class="toc-text">服务发现</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#服务暴露给集群外部客户端"><span class="toc-number">3.5.2.</span> <span class="toc-text">服务暴露给集群外部客户端</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ConfigMap和Secret"><span class="toc-number">3.6.</span> <span class="toc-text">ConfigMap和Secret</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PV和PVC"><span class="toc-number">3.7.</span> <span class="toc-text">PV和PVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#StatefulSet"><span class="toc-number">3.8.</span> <span class="toc-text">StatefulSet</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务改造指南"><span class="toc-number">4.</span> <span class="toc-text">服务改造指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#检索服务"><span class="toc-number">4.1.</span> <span class="toc-text">检索服务</span></a></li></ol></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
   
-    <article id="post-paxos-made-simple" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/25/paxos-made-simple/">[译]Paxos Made Simple</a>
-    </h1>
   
 
-        
-        <a href="/2018/09/25/paxos-made-simple/" class="archive-article-date">
-  	<time datetime="2018-09-25T13:32:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>“只有一种一致性协议，那就是Paxos” – <a href="https://perspectives.mvdirona.com/2008/05/mike-burrows-early-days-at-dec-through-microsoft-to-google/" target="_blank" rel="external">Mike Burrows</a> Google Chubby 作者
-        
-          <a class="article-more-a" href="/2018/09/25/paxos-made-simple/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/09/25/paxos-made-simple/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-ycm-vim-cfg" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/14/ycm-vim-cfg/">YouCompleteMe配置与我的vimrc备份</a>
-    </h1>
   
 
-        
-        <a href="/2018/02/14/ycm-vim-cfg/" class="archive-article-date">
-  	<time datetime="2018-02-14T10:10:50.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>作为一个C++爱好者同时也是vi爱好者，我个人觉得vi就是写代码工具不是IDE所以只用少数几个插件，其中YouCompleteMe是我极力推荐的插件，YouCompleteMe主要是自动补全，还有跳转，类型显示等功能，与之前的基于规则补全插件不同的是YouCompleteMe是基于语义，从安装过程就可以看出来。
-        
-          <a class="article-more-a" href="/2018/02/14/ycm-vim-cfg/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">vi</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/02/14/ycm-vim-cfg/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-epoll-notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/24/epoll-notes/">Epoll的一些事情</a>
-    </h1>
   
 
-        
-        <a href="/2017/12/24/epoll-notes/" class="archive-article-date">
-  	<time datetime="2017-12-24T06:17:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p> Epoll出现使得Linux平台上<a href="http://www.kegel.com/c10k.html" target="_blank" rel="external">C10K</a>迎刃而解。这里不说epoll的使用，man/google一下即可，只关注三个微小的方面:<strong>线程安全</strong>，<strong>触发机制</strong>以及<strong>客户端断开</strong>。
-        
-          <a class="article-more-a" href="/2017/12/24/epoll-notes/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">multithreading</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">linux</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/24/epoll-notes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C-Notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/16/C-Notes/">C++ Cheat Sheet (keep updating ...)</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/16/C-Notes/" class="archive-article-date">
-  	<time datetime="2017-12-16T11:33:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>有一阵子没有关注C++了，随着年纪增长记忆力下降，感觉需要一个小抄记录些C++的知识可以随时查阅，碰到什么值得记录知识点就记录在这里，时不时更新下这个文档。
-        
-          <a class="article-more-a" href="/2017/12/16/C-Notes/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/16/C-Notes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-gfs-notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/07/gfs-notes/">[译]The Google File System</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/07/gfs-notes/" class="archive-article-date">
-  	<time datetime="2017-12-07T14:19:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>据说<a href="https://research.google.com/archive/gfs.html" target="_blank" rel="external"><em>The Google File System</em></a>是google老三篇中最有诚意的一篇，包含了很多分布式理论知识点（primary-secondary，lease，replica，log，checkpoint等）本文是该论文1-5章的翻译（性能等章节就不翻译了），尽量基于中文阅读习惯和用短句的论文撰写习惯翻译，对于自己感觉翻译不太准确或者可能有歧义的地方会贴上英文原文。
-        
-          <a class="article-more-a" href="/2017/12/07/gfs-notes/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">google</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/07/gfs-notes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Quorum" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/03/Quorum/">分布式原理与工程 —— Quorum机制</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/03/Quorum/" class="archive-article-date">
-  	<time datetime="2017-12-03T10:16:31.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Quorum机制是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法
-        
-          <a class="article-more-a" href="/2017/12/03/Quorum/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">system design</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/03/Quorum/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-coursera-ng-deeplearning-notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/26/coursera-ng-deeplearning-notes/">deeplearning.ai系列学习笔记</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/26/coursera-ng-deeplearning-notes/" class="archive-article-date">
-  	<time datetime="2017-11-26T14:53:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>吴恩达(Andrew Ng)离开老东家之后创立了一个创业公司叫deeplearing.ai，并且在Coursera（Ng也是cofounder）上开设一个5门课程组成deeplearning系列，
-        
-          <a class="article-more-a" href="/2017/11/26/coursera-ng-deeplearning-notes/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">coursera</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">deep learning</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">AI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/26/coursera-ng-deeplearning-notes/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-C-11-Memory-Model" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/24/C-11-Memory-Model/">C++11 Memory Model</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/24/C-11-Memory-Model/" class="archive-article-date">
-  	<time datetime="2017-11-24T14:05:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><em>Herb Sutter在一次对C++11内存模型的<a href="https://herbsutter.com/2013/02/11/atomic-weapons-the-c-memory-model-and-modern-hardware/" target="_blank" rel="external">演讲</a>中提到C++11的内存模型，让C++有了标准独立于编译器和平台线程库和标准的多线程内存控制方式。</em></p>
-        
-          <a class="article-more-a" href="/2017/11/24/C-11-Memory-Model/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/24/C-11-Memory-Model/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Eventually-Consistent - Revisited" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/19/Eventually-Consistent - Revisited/">[译]最终一致性 - 修订版(Eventually Consistent - Revisited)</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/19/Eventually-Consistent - Revisited/" class="archive-article-date">
-  	<time datetime="2017-11-19T11:08:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><em>译者注：这是AWS CTO Werner Vogels写的<a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html" target="_blank" rel="external">一致性模型的经典文章</a>在其博客<a href="http://www.allthingsdistributed.com/" target="_blank" rel="external">All Things Distributed</a>上亦有发布。</em>       </p>
-        
-          <a class="article-more-a" href="/2017/11/19/Eventually-Consistent - Revisited/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">distributed</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">system design</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/19/Eventually-Consistent - Revisited/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Learning-Design-and-Coding-From-LevelDB" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/05/Learning-Design-and-Coding-From-LevelDB/">Learning Design and Coding From LevelDB (keep updating ...)</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/05/Learning-Design-and-Coding-From-LevelDB/" class="archive-article-date">
-  	<time datetime="2017-11-05T06:44:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>LevelDB is a fast key-value storage library written at Google by Jeff Dean that provides an ordered mapping from string keys to string values. We could learn design and coding from the source code.</p>
-        
-          <a class="article-more-a" href="/2017/11/05/Learning-Design-and-Coding-From-LevelDB/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">leveldb</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/05/Learning-Design-and-Coding-From-LevelDB/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-LeetCode with C++ and Java and little scala" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/04/LeetCode with C++ and Java and little scala/">LeetCode using C++ and Java (keep updating ...)</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/04/LeetCode with C++ and Java and little scala/" class="archive-article-date">
-  	<time datetime="2017-11-04T04:43:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>LeetCode的题目非常是碎片化时间来做，而且可以尝试最新的C++标准和多种语言，
-        
-          <a class="article-more-a" href="/2017/11/04/LeetCode with C++ and Java and little scala/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">LeetCode</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/04/LeetCode with C++ and Java and little scala/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/04/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/11/04/hello-world/" class="archive-article-date">
-  	<time datetime="2017-11-04T03:32:24.959Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-11-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-        
-          <a class="article-more-a" href="/2017/11/04/hello-world/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">hexo</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/11/04/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
 
 
@@ -1448,8 +523,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: true,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
